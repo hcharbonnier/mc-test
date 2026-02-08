@@ -1,0 +1,1374 @@
+<!DOCTYPE html><html>
+<head>
+<title></title>
+<style type="text/css">
+<!--
+.xflip {
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: fliph;
+}
+.yflip {
+    -moz-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    -o-transform: scaleY(-1);
+    transform: scaleY(-1);
+    filter: flipv;
+}
+.xyflip {
+    -moz-transform: scaleX(-1) scaleY(-1);
+    -webkit-transform: scaleX(-1) scaleY(-1);
+    -o-transform: scaleX(-1) scaleY(-1);
+    transform: scaleX(-1) scaleY(-1);
+    filter: fliph + flipv;
+}
+-->
+</style>
+</head>
+<body>
+<a name=1></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-1_1.png"/><br/>
+Received&#160;7&#160;July&#160;2023,&#160;accepted&#160;21&#160;September&#160;2023,&#160;date&#160;of&#160;publication&#160;10&#160;October&#160;2023,&#160;date&#160;of&#160;current&#160;version&#160;13&#160;October&#160;2023.<br/>
+<i>Digital&#160;Object&#160;Identifier&#160;10.1109/ACCESS.2023.3323216</i><br/>
+Robust&#160;Manga&#160;Page&#160;Colorization&#160;via<br/>Coloring&#160;Latent&#160;Space<br/>
+MAKSIM&#160;GOLYADKI<a href="https://orcid.org/0000-0002-0679-6981">N&#160;1,2,4&#160;</a>AND&#160;ILYA&#160;MAKARO<a href="https://orcid.org/0000-0002-3308-8825">V&#160;1,3,4</a><br/>
+1&#160;Artificial&#160;Intelligence&#160;Research&#160;Institute&#160;(AIRI),&#160;105064&#160;Moscow,&#160;Russia<br/>2&#160;International&#160;Laboratory&#160;for&#160;Intelligent&#160;Systems&#160;and&#160;Structural&#160;Analysis,&#160;HSE&#160;University,&#160;101000&#160;Moscow,&#160;Russia<br/>3&#160;AI&#160;Center,&#160;National&#160;University&#160;of&#160;Science&#160;and&#160;Technology&#160;MISIS,&#160;119991&#160;Moscow,&#160;Russia<br/>4&#160;Laboratory&#160;of&#160;Algorithms&#160;and&#160;Technologies&#160;for&#160;Network&#160;Analysis,&#160;HSE&#160;University,&#160;603155&#160;Nizhny&#160;Novgorod,&#160;Russia<br/>
+Corresponding&#160;author:&#160;Maksim&#160;Golyadkin&#160;(golyadkin@airi.net)<br/>
+This&#160;work&#160;was&#160;supported&#160;in&#160;part&#160;on&#160;Section&#160;2&#160;by&#160;the&#160;Strategic&#160;Project&#160;‘‘Digital&#160;Business’’&#160;within&#160;the&#160;framework&#160;of&#160;the&#160;Strategic&#160;Academic<br/>Leadership&#160;Program&#160;‘‘Priority&#160;2030’’&#160;at&#160;the&#160;National&#160;University&#160;of&#160;Science&#160;and&#160;Technology&#160;(NUST)&#160;MISiS,&#160;in&#160;part&#160;by&#160;the&#160;Basic&#160;Research<br/>Program&#160;at&#160;the&#160;National&#160;Research&#160;University&#160;Higher&#160;School&#160;of&#160;Economics&#160;(HSE&#160;University),&#160;and&#160;in&#160;part&#160;by&#160;the&#160;Computational&#160;Resources<br/>of&#160;HPC&#160;Facilities&#160;at&#160;HSE&#160;University.<br/>
+<b>ABSTRACT&#160;</b>Manga&#160;(Japanese&#160;comics)&#160;are&#160;commonly&#160;drawn&#160;with&#160;black&#160;ink&#160;on&#160;paper.&#160;Colorization&#160;of<br/>manga&#160;pages&#160;can&#160;enrich&#160;the&#160;visual&#160;content&#160;and&#160;provide&#160;a&#160;better&#160;reading&#160;experience.&#160;However,&#160;the&#160;existing<br/>colorization&#160;approaches&#160;are&#160;not&#160;sufficiently&#160;robust.&#160;In&#160;this&#160;paper,&#160;we&#160;propose&#160;a&#160;two-stage&#160;approach&#160;for<br/>manga&#160;page&#160;colorization&#160;that&#160;supports&#160;sampling&#160;and&#160;color&#160;modification&#160;with&#160;color&#160;hints.&#160;In&#160;the&#160;first&#160;step,<br/>we&#160;employ&#160;the&#160;Pixel2Style2Pixel&#160;architecture&#160;to&#160;map&#160;the&#160;black-and-white&#160;manga&#160;image&#160;into&#160;the&#160;latent&#160;space<br/>of&#160;StyleGAN&#160;pretrained&#160;on&#160;the&#160;highly&#160;blurred&#160;colored&#160;manga&#160;images&#160;that&#160;we&#160;call&#160;Coloring&#160;Latent&#160;Space.&#160;The<br/>latent&#160;vector&#160;is&#160;automatically&#160;or&#160;manually&#160;modified&#160;and&#160;fed&#160;into&#160;the&#160;StyleGAN&#160;synthesis&#160;network&#160;to&#160;generate<br/>a&#160;coloring&#160;draft&#160;that&#160;sets&#160;the&#160;overall&#160;color&#160;distribution&#160;for&#160;the&#160;image.&#160;In&#160;the&#160;second&#160;step,&#160;heavy&#160;Pix2Pix-like<br/>conditional&#160;GAN&#160;fuses&#160;the&#160;information&#160;from&#160;the&#160;coloring&#160;draft&#160;and&#160;user-defined&#160;color&#160;hints&#160;and&#160;generates&#160;the<br/>final&#160;high-quality&#160;coloring.&#160;Our&#160;method&#160;partially&#160;overcomes&#160;the&#160;multimodality&#160;of&#160;the&#160;considered&#160;problem<br/>and&#160;generates&#160;diverse&#160;but&#160;consistent&#160;colorings&#160;without&#160;user&#160;input.&#160;The&#160;visual&#160;comparison,&#160;the&#160;quantitative<br/>evaluation&#160;with&#160;Frechet&#160;Inception&#160;Distance,&#160;and&#160;the&#160;qualitative&#160;evaluation&#160;via&#160;Mean&#160;Opinion&#160;Score&#160;exhibit<br/>the&#160;superiority&#160;of&#160;our&#160;approach&#160;over&#160;the&#160;existing&#160;state-of-the-art&#160;manga&#160;pages&#160;colorization&#160;method.<br/>
+<b>INDEX&#160;TERMS&#160;</b>Image&#160;colorization,&#160;deep&#160;learning,&#160;image&#160;generation,&#160;semi-supervised&#160;learning.<br/>
+<b>I.&#160;INTRODUCTION</b><br/>
+in&#160;picking&#160;colors,&#160;which&#160;demanded&#160;less&#160;effort&#160;but&#160;still<br/>
+Image&#160;colorization&#160;both&#160;challenging&#160;and&#160;fascinating&#160;task.<br/>
+involved&#160;a&#160;great&#160;deal&#160;of&#160;interaction.&#160;The&#160;new&#160;wave&#160;of&#160;interest<br/>
+Color&#160;has&#160;a&#160;profound&#160;effect&#160;on&#160;a&#160;person’s&#160;perception&#160;of&#160;the<br/>
+is&#160;related&#160;to&#160;the&#160;introduction&#160;of&#160;learning-based&#160;methods.<br/>
+world,&#160;so&#160;the&#160;ability&#160;to&#160;bring&#160;new&#160;depth&#160;to&#160;images&#160;through<br/>
+The&#160;encouraging&#160;results&#160;of&#160;their&#160;application&#160;to&#160;image<br/>
+coloring&#160;arouses&#160;genuine&#160;interest.&#160;For&#160;example,&#160;coloring<br/>
+colorization&#160;were&#160;not&#160;surprising&#160;since&#160;machine&#160;learning<br/>
+books&#160;are&#160;popular&#160;among&#160;children,&#160;as&#160;well&#160;as&#160;legacy&#160;photo<br/>
+algorithms&#160;had&#160;achieved&#160;success&#160;in&#160;various&#160;fields&#160;of&#160;science<br/>
+colorization&#160;among&#160;adults.&#160;However,&#160;manual&#160;colorization&#160;is<br/>
+and&#160;entertainment.&#160;Several&#160;approaches&#160;based&#160;on&#160;training<br/>
+heavily&#160;time-consuming&#160;even&#160;for&#160;professional&#160;artists,&#160;not&#160;to<br/>
+CNN&#160;deep&#160;learning&#160;models&#160;on&#160;large-scale&#160;image&#160;datasets&#160;in<br/>
+mention&#160;hobbyists,&#160;and&#160;requires&#160;a&#160;certain&#160;amount&#160;of&#160;physical<br/>
+an&#160;end-to-end&#160;fashion&#160;have&#160;been&#160;proposed&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[1],&#160;[2].&#160;Some&#160;</a>of<br/>
+effort.&#160;It&#160;can&#160;be&#160;beneficial&#160;for&#160;developing&#160;children’s&#160;fine<br/>
+them&#160;perform&#160;the&#160;colorization&#160;manually&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[3],&#160;whereas&#160;</a>others<br/>
+motor&#160;skills&#160;but&#160;is&#160;quite&#160;discouraging&#160;regarding&#160;industrial<br/>
+use&#160;user-constructed&#160;input&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[4],&#160;[5].</a><br/>
+applications.&#160;Therefore,&#160;there&#160;is&#160;an&#160;interest&#160;in&#160;developing<br/>
+Even&#160;more&#160;challenging&#160;task&#160;is&#160;the&#160;manga&#160;page&#160;colorization.<br/>
+algorithms&#160;that&#160;can&#160;simplify&#160;this&#160;process.<br/>
+Real&#160;objects&#160;have&#160;not&#160;so&#160;much&#160;variance&#160;in&#160;visual&#160;appearance,<br/>
+At&#160;the&#160;beginning&#160;of&#160;the&#160;century,&#160;there&#160;were&#160;proposed<br/>
+but&#160;drawings&#160;of&#160;the&#160;same&#160;things,&#160;especially&#160;ones&#160;of&#160;differ-<br/>
+approaches&#160;for&#160;image&#160;colorization&#160;that&#160;used&#160;human&#160;assistance<br/>
+ent&#160;styles,&#160;can&#160;have&#160;notably&#160;distinct&#160;appearances&#160;whereas<br/>retaining&#160;the&#160;natural&#160;features&#160;that&#160;can&#160;be&#160;recognized&#160;by&#160;a<br/>
+The&#160;associate&#160;editor&#160;coordinating&#160;the&#160;review&#160;of&#160;this&#160;manuscript&#160;and<br/>
+human&#160;but&#160;hardly&#160;by&#160;a&#160;computer.&#160;There&#160;is&#160;a&#160;large&#160;industry<br/>
+approving&#160;it&#160;for&#160;publication&#160;was&#160;Yongjie&#160;Li.<br/>
+of&#160;manga&#160;production&#160;in&#160;Japan&#160;that&#160;has&#160;been&#160;creating&#160;a<br/>
+&#160;2023&#160;The&#160;Authors.&#160;This&#160;work&#160;is&#160;licensed&#160;under&#160;a&#160;Creative&#160;Commons&#160;Attribution-NonCommercial-NoDerivatives&#160;4.0&#160;License.<br/>
+VOLUME&#160;11,&#160;2023<br/>
+For&#160;more&#160;information,&#160;see&#160;https://creativecommons.org/licenses/by-nc-nd/4.0/<br/>
+111581<br/>
+<hr/>
+<a name=2></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-2_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-2_2.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+In&#160;this&#160;work,&#160;we&#160;propose&#160;an&#160;approach&#160;for&#160;the&#160;colorization<br/>
+of&#160;black-and-white&#160;manga&#160;pages&#160;that&#160;employs&#160;the&#160;generative<br/>power&#160;of&#160;the&#160;pretrained&#160;StyleGAN&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[12],&#160;[13]&#160;for&#160;</a>the&#160;coloring<br/>generation&#160;and&#160;supports&#160;its&#160;modification&#160;with&#160;color&#160;hints.<br/>The&#160;use&#160;of&#160;StyleGAN&#160;provides&#160;a&#160;different&#160;approach&#160;to&#160;the<br/>colorization&#160;problem,&#160;and&#160;its&#160;rich&#160;latent&#160;space&#160;contributes<br/>to&#160;the&#160;generation&#160;of&#160;more&#160;believable&#160;images,&#160;as&#160;well&#160;as<br/>enables&#160;to&#160;produce&#160;semantically&#160;meaningful&#160;transformations<br/>by&#160;changing&#160;the&#160;values&#160;of&#160;the&#160;style&#160;vector.<br/>
+Our&#160;contributions&#160;are&#160;summarized&#160;as&#160;follows:<br/>
+•<br/>
+We&#160;have&#160;explored&#160;the&#160;ability&#160;of&#160;StyleGAN&#160;to&#160;learn<br/>the&#160;distribution&#160;of&#160;color&#160;manga&#160;images&#160;and&#160;its&#160;ability<br/>to&#160;build&#160;a&#160;proper&#160;latent&#160;space&#160;for&#160;existing&#160;projection<br/>methods.<br/>
+•<br/>
+We&#160;have&#160;proposed&#160;a&#160;learning-based&#160;manga&#160;colorization<br/>
+<b>FIGURE&#160;1.&#160;</b>The&#160;overview&#160;of&#160;the&#160;proposed&#160;two-stage&#160;approach.&#160;In&#160;the&#160;first<br/>
+method&#160;that&#160;utilizes&#160;pretrained&#160;StyleGAN&#160;and&#160;exhibits<br/>
+stage,&#160;the&#160;drafting&#160;network&#160;generates&#160;distinct&#160;coloring&#160;drafts&#160;for&#160;a&#160;given<br/>manga&#160;page&#160;image&#160;using&#160;style&#160;mixing.&#160;In&#160;the&#160;second&#160;stage,&#160;the<br/>
+high&#160;visual&#160;performance&#160;in&#160;automatic&#160;mode,&#160;as&#160;well&#160;as<br/>
+colorization&#160;network&#160;produces&#160;a&#160;coloring&#160;for&#160;the&#160;black-and-white&#160;image<br/>
+qualitatively&#160;supports&#160;image&#160;modification&#160;via&#160;user&#160;input.<br/>
+by&#160;using&#160;the&#160;generated&#160;coloring&#160;drafts&#160;and&#160;user-defined&#160;color&#160;hints.<br/>
+Employment&#160;of&#160;StyleGAN&#160;increases&#160;the&#160;robustness&#160;of<br/>the&#160;model.<br/>
+•<br/>
+We&#160;have&#160;investigated&#160;the&#160;ability&#160;of&#160;existing&#160;colorization<br/>methods&#160;trained&#160;on&#160;a&#160;synthetic&#160;pairwise&#160;dataset&#160;to<br/>
+massive&#160;amount&#160;of&#160;black-and-white&#160;images&#160;for&#160;a&#160;few&#160;decades.<br/>
+generalize&#160;well&#160;on&#160;real&#160;black-and-white&#160;manga&#160;and<br/>
+Manga&#160;images&#160;are&#160;richly&#160;diversified&#160;in&#160;terms&#160;of&#160;content<br/>
+have&#160;verified&#160;whether&#160;domain&#160;adaptation&#160;techniques&#160;can<br/>
+and&#160;visual&#160;appearance&#160;but&#160;share&#160;a&#160;common&#160;structure&#160;and<br/>
+improve&#160;generalizability.<br/>
+drawing&#160;approach.&#160;Therefore,&#160;it&#160;makes&#160;sense&#160;to&#160;consider&#160;it<br/>as&#160;a&#160;self-sufficient&#160;data&#160;collection&#160;distinct&#160;from&#160;the&#160;other<br/>
+The&#160;paper&#160;is&#160;organized&#160;as&#160;follows.&#160;We&#160;review&#160;existing<br/>
+artistic&#160;images.&#160;A&#160;typical&#160;manga&#160;page&#160;consists&#160;of&#160;several<br/>
+methods&#160;of&#160;image&#160;and&#160;manga&#160;colorization.&#160;Then&#160;we&#160;intro-<br/>
+panels&#160;with&#160;varying&#160;types&#160;of&#160;content.&#160;This&#160;content&#160;includes<br/>
+duce&#160;our&#160;approach&#160;and&#160;explain&#160;the&#160;ideas&#160;behind&#160;it.&#160;Next,<br/>
+a&#160;lot&#160;of&#160;intersections,&#160;occlusions&#160;and&#160;shape&#160;distortion.<br/>
+we&#160;describe&#160;the&#160;training&#160;dataset,&#160;its&#160;preprocessing,&#160;and&#160;the<br/>
+Therefore,&#160;manga&#160;images&#160;are&#160;a&#160;good&#160;benchmark&#160;for&#160;computer<br/>
+training&#160;procedure.&#160;Finally,&#160;we&#160;exhibit&#160;the&#160;training&#160;results&#160;and<br/>
+vision&#160;algorithms&#160;due&#160;to&#160;their&#160;complexity.&#160;In&#160;addition,&#160;there<br/>
+compare&#160;our&#160;approach&#160;with&#160;existing&#160;methods.<br/>
+is&#160;significantly&#160;more&#160;black-and-white&#160;manga&#160;than&#160;color<br/>one,&#160;providing&#160;great&#160;potential&#160;for&#160;semi-supervised&#160;methods<br/>
+<b>II.&#160;RELATED&#160;WORK</b><br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[6],&#160;[7].</a><br/>
+Recently,&#160;there&#160;has&#160;been&#160;a&#160;significant&#160;amount&#160;of&#160;attention&#160;to<br/>
+Most&#160;of&#160;the&#160;existing&#160;methods&#160;of&#160;artistic&#160;image&#160;colorization<br/>
+the&#160;utilization&#160;of&#160;machine&#160;learning&#160;techniques&#160;for&#160;coloriza-<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[8],&#160;[9],&#160;[10]&#160;are&#160;</a>actually&#160;designed&#160;for&#160;the&#160;colorization&#160;of<br/>
+tion.&#160;Among&#160;existing&#160;works&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[1],&#160;[2],&#160;the&#160;</a>deep&#160;convolutional<br/>
+sketches&#160;drawn&#160;in&#160;the&#160;Japanese&#160;style.&#160;Most&#160;of&#160;these&#160;sketches<br/>
+neural&#160;network&#160;has&#160;become&#160;the&#160;mainstream&#160;approach&#160;to<br/>
+depict&#160;one&#160;or&#160;more&#160;characters&#160;on&#160;a&#160;homogeneous&#160;background,<br/>
+learn&#160;color&#160;prediction&#160;from&#160;a&#160;large-scale&#160;dataset.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[14]&#160;and</a><br/>
+which&#160;is&#160;substantially&#160;more&#160;primitive&#160;content&#160;than&#160;manga<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[15]&#160;utilize&#160;</a>PixelCNN&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[16]&#160;and&#160;</a>Axial&#160;Transformer&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[17]</a><br/>
+pages.&#160;The&#160;direct&#160;application&#160;of&#160;these&#160;methods&#160;does&#160;not&#160;allow<br/>
+respectively&#160;to&#160;produce&#160;colorization&#160;in&#160;autoregressive&#160;way.<br/>
+to&#160;obtain&#160;qualitative&#160;results&#160;because&#160;of&#160;the&#160;domain&#160;gap&#160;caused<br/>
+The&#160;most&#160;common&#160;approach&#160;to&#160;this&#160;task&#160;involves&#160;the<br/>
+by&#160;training&#160;on&#160;synthetic&#160;data,&#160;which&#160;is&#160;generated&#160;by&#160;the<br/>
+utilization&#160;of&#160;the&#160;adversarial&#160;loss,&#160;similarly&#160;to&#160;the&#160;Pix2Pix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[18]</a><br/>
+methods&#160;used&#160;in&#160;these&#160;works.&#160;Rare&#160;works&#160;focused&#160;directly&#160;on<br/>
+model.<br/>
+the&#160;colorization&#160;of&#160;manga&#160;pages&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[9],&#160;[11]&#160;produce&#160;</a>colorings<br/>
+Other&#160;CNN&#160;based&#160;methods&#160;are&#160;combined&#160;with&#160;user<br/>
+of&#160;insufficient&#160;quality.<br/>
+interactions.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[4],&#160;[19]&#160;propose&#160;</a>to&#160;train&#160;and&#160;inference&#160;a&#160;deep<br/>
+Existing&#160;colorization&#160;methods&#160;suffer&#160;from&#160;the&#160;mode<br/>
+network&#160;given&#160;the&#160;grayscale&#160;image&#160;and&#160;user-defined&#160;color<br/>
+collapse&#160;intrinsic&#160;to&#160;adversarial&#160;learning.&#160;Hence,&#160;they&#160;have<br/>
+dots.&#160;This&#160;approach&#160;allows&#160;the&#160;user&#160;to&#160;control&#160;the&#160;colorization<br/>
+a&#160;strong&#160;preference&#160;for&#160;some&#160;colors.&#160;This&#160;limitation&#160;may&#160;be<br/>
+process.&#160;Some&#160;works&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[20],&#160;[21]&#160;suggest&#160;</a>a&#160;reference-based<br/>
+acceptable&#160;for&#160;natural&#160;images&#160;but&#160;imposes&#160;an&#160;expressiveness<br/>
+methods&#160;using&#160;a&#160;deep&#160;learning&#160;approach.&#160;The&#160;colorization<br/>
+limitation&#160;for&#160;artistic&#160;ones.&#160;Therefore,&#160;there&#160;is&#160;a&#160;need&#160;for&#160;an<br/>
+network&#160;learns&#160;to&#160;match&#160;semantic&#160;features&#160;of&#160;input&#160;and<br/>
+approach&#160;that&#160;is&#160;not&#160;affected&#160;by&#160;the&#160;problems&#160;caused&#160;by&#160;the<br/>
+reference&#160;images&#160;to&#160;coherently&#160;colorize&#160;similar&#160;objects.<br/>
+application&#160;of&#160;adversarial&#160;learning&#160;to&#160;dense&#160;prediction.&#160;This<br/>
+There&#160;have&#160;also&#160;appeared&#160;works&#160;on&#160;the&#160;colorization&#160;of<br/>
+problem&#160;may&#160;be&#160;coped&#160;with&#160;the&#160;employment&#160;of&#160;user&#160;input,<br/>
+artistic&#160;images.&#160;In&#160;wide&#160;variety&#160;of&#160;works&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[8],&#160;[10],&#160;[22],</a><br/>
+but&#160;this&#160;approach&#160;requires&#160;additional&#160;manipulation.&#160;Our&#160;work<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[23],&#160;[24],&#160;[25],&#160;[26]</a><a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">,&#160;[27],&#160;[28]&#160;high-quality&#160;</a>colorization&#160;are<br/>
+focuses&#160;on&#160;the&#160;improvement&#160;of&#160;automatic&#160;colorization.<br/>
+performed&#160;with&#160;user-constructed&#160;scribbles.&#160;Oppositely,&#160;there<br/>
+111582<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=3></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-3_1.png"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+are&#160;a&#160;vast&#160;amount&#160;of&#160;methods&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[9],&#160;[29]</a><a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">,&#160;[30]&#160;that&#160;</a>employ<br/>
+Thus,&#160;the&#160;discriminator&#160;knowledge&#160;about&#160;color&#160;images&#160;is&#160;used<br/>
+reference&#160;images.&#160;In&#160;addition,&#160;some&#160;methods&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[31],&#160;[32],&#160;[33]</a><br/>
+to&#160;improve&#160;the&#160;generator&#160;performance&#160;on&#160;the&#160;distribution<br/>
+define&#160;colors&#160;with&#160;text.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[11]&#160;combined&#160;</a>both&#160;approaches.<br/>
+of&#160;real&#160;black-and-white&#160;images.&#160;In&#160;the&#160;second&#160;step,&#160;we&#160;use<br/>
+Reference&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[34]&#160;sho</a>wed&#160;that&#160;sequential&#160;prediction&#160;of&#160;color<br/>
+several&#160;snapshots&#160;of&#160;a&#160;well-trained&#160;colorization&#160;model&#160;to<br/>
+and&#160;density&#160;can&#160;improve&#160;model&#160;performance.&#160;Yoo&#160;et&#160;al.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[35]</a><br/>
+create&#160;the&#160;paired&#160;dataset&#160;for&#160;real&#160;black-and-white&#160;images&#160;by<br/>
+employed&#160;a&#160;memory&#160;network&#160;that&#160;enhances&#160;the&#160;colorization<br/>
+predicting&#160;colorings&#160;for&#160;them.&#160;In&#160;other&#160;words,&#160;we&#160;employ&#160;a<br/>
+of&#160;rare&#160;objects.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[36]&#160;introduced&#160;</a>a&#160;method&#160;that&#160;colorizes&#160;manga<br/>
+self-training&#160;approach.&#160;Distinct&#160;colorings&#160;are&#160;used&#160;to&#160;prevent<br/>
+through&#160;unsupervised&#160;domain&#160;translation&#160;between&#160;black-<br/>
+overfitting&#160;and&#160;to&#160;help&#160;the&#160;model&#160;learn&#160;how&#160;to&#160;extract<br/>
+and-white&#160;manga&#160;and&#160;colored&#160;American&#160;comics.&#160;Reference<br/>
+information&#160;from&#160;drafts&#160;and&#160;color&#160;hints.&#160;In&#160;the&#160;end,&#160;we&#160;train<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[37]&#160;proposed&#160;</a>a&#160;method&#160;that&#160;uses&#160;active-learning-based<br/>
+the&#160;drafting&#160;network&#160;and&#160;colorization&#160;network&#160;independently<br/>
+framework&#160;to&#160;colorize&#160;a&#160;set&#160;of&#160;sketch&#160;images&#160;using&#160;a<br/>
+in&#160;a&#160;supervised&#160;manner&#160;with&#160;synthetic&#160;data&#160;and&#160;real&#160;data&#160;with<br/>
+single&#160;colored&#160;reference&#160;image.&#160;Reference&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38]&#160;suggested&#160;</a>an<br/>
+pseudolabels.<br/>
+approach&#160;for&#160;manga&#160;page&#160;colorization&#160;with&#160;color&#160;hints.<br/>
+We&#160;intentionally&#160;avoid&#160;using&#160;an&#160;architecture&#160;that&#160;utilizes<br/>
+There&#160;are&#160;approaches&#160;using&#160;pretrained&#160;StyleGAN&#160;to&#160;assist<br/>
+StyleGAN&#160;as&#160;a&#160;feature&#160;bank&#160;like&#160;GLEAN&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[42]&#160;for&#160;</a>drafting<br/>
+image&#160;colorization&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[39],&#160;[40].&#160;These&#160;</a>methods&#160;are&#160;based&#160;on<br/>
+network.&#160;Such&#160;architecture&#160;is&#160;end-to-end&#160;trained,&#160;which<br/>
+the&#160;generation&#160;of&#160;reference&#160;color&#160;images&#160;whose&#160;content&#160;is<br/>
+means&#160;that&#160;it&#160;is&#160;basically&#160;a&#160;cGAN&#160;and&#160;is&#160;subject&#160;to&#160;the<br/>
+close&#160;to&#160;the&#160;input&#160;image.&#160;However,&#160;StyleGAN&#160;is&#160;not&#160;capable<br/>
+same&#160;problems&#160;common&#160;to&#160;cGANs&#160;resulting&#160;from&#160;the&#160;training<br/>
+of&#160;generating&#160;manga&#160;images&#160;that&#160;are&#160;hard&#160;to&#160;distinguish<br/>
+with&#160;a&#160;combination&#160;of&#160;supervised&#160;and&#160;adversarial&#160;losses.<br/>
+from&#160;real&#160;ones.&#160;Therefore,&#160;we&#160;use&#160;StyleGAN&#160;to&#160;generate<br/>
+We&#160;experimented&#160;with&#160;the&#160;GLEAN&#160;architecture&#160;and&#160;found<br/>
+very&#160;rough&#160;colorings&#160;and&#160;to&#160;provide&#160;latent&#160;space&#160;specif-<br/>
+no&#160;improvement&#160;over&#160;a&#160;single&#160;colorization&#160;network.&#160;The<br/>
+ically&#160;for&#160;these&#160;colorings.&#160;Reference&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[41]&#160;emplo</a>ys&#160;rough<br/>
+conditional&#160;generation&#160;is&#160;more&#160;complex&#160;than&#160;the&#160;uncon-<br/>
+colorings&#160;for&#160;colorization&#160;and&#160;shows&#160;their&#160;effectiveness.&#160;The<br/>
+ditional&#160;one&#160;since&#160;model&#160;weights&#160;must&#160;simultaneously&#160;fit<br/>
+model&#160;for&#160;rough&#160;coloring&#160;generation&#160;is&#160;also&#160;trained&#160;with<br/>
+all&#160;possible&#160;inputs,&#160;thus&#160;implicitly&#160;modeling&#160;the&#160;conditional<br/>
+adversarial&#160;loss,&#160;so&#160;the&#160;constraint&#160;on&#160;color&#160;diversity&#160;remains.<br/>
+distribution&#160;on&#160;the&#160;colorings&#160;and&#160;explicitly&#160;sampling&#160;from<br/>
+We&#160;overcome&#160;it&#160;with&#160;our&#160;approach.<br/>
+it.&#160;Thus,&#160;the&#160;estimated&#160;distribution&#160;is&#160;less&#160;expressive&#160;in<br/>comparison&#160;to&#160;the&#160;unconditional&#160;approaches.&#160;Our&#160;approach<br/>introduces&#160;two&#160;kinds&#160;of&#160;generation&#160;with&#160;two&#160;neural&#160;networks:<br/>
+<b>III.&#160;METHOD</b><br/>
+the&#160;first&#160;consists&#160;of&#160;unconditional&#160;generation&#160;of&#160;coloring<br/>
+In&#160;this&#160;work,&#160;we&#160;propose&#160;a&#160;method&#160;for&#160;automatic&#160;multimodal<br/>
+draft&#160;(unconditional&#160;in&#160;terms&#160;of&#160;color&#160;distribution&#160;since&#160;we<br/>
+manga&#160;page&#160;colorization&#160;that&#160;supports&#160;modification&#160;with<br/>
+apply&#160;style&#160;mixing&#160;with&#160;random&#160;CLS&#160;vector),&#160;the&#160;second&#160;is<br/>
+color&#160;hints&#160;(see&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">1).&#160;</a>We&#160;use&#160;ideas&#160;from&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[8]&#160;and&#160;</a>employ&#160;two<br/>
+conditional&#160;generation&#160;based&#160;on&#160;coloring&#160;draft.&#160;We&#160;bypass<br/>
+neural&#160;networks&#160;for&#160;colorization:&#160;the&#160;drafting&#160;network&#160;and<br/>
+the&#160;expressivity&#160;constraint&#160;since&#160;the&#160;result&#160;of&#160;conditional<br/>
+the&#160;colorization&#160;network.&#160;The&#160;first&#160;model&#160;utilizes&#160;pretrained<br/>
+generation&#160;depends&#160;directly&#160;on&#160;the&#160;input&#160;coloring&#160;draft<br/>
+StyleGAN&#160;to&#160;generate&#160;highly&#160;blurred&#160;images&#160;(coloring&#160;drafts)<br/>
+that&#160;is&#160;generated&#160;unconditionally.&#160;Colorization&#160;with&#160;a&#160;fixed<br/>
+that&#160;set&#160;the&#160;overall&#160;color&#160;distribution&#160;of&#160;the&#160;image,&#160;and&#160;the<br/>
+coloring&#160;draft&#160;implies&#160;only&#160;a&#160;small&#160;amount&#160;of&#160;variation&#160;about<br/>
+colorization&#160;network,&#160;based&#160;on&#160;this&#160;coloring&#160;draft&#160;and&#160;the<br/>
+itself,&#160;which&#160;greatly&#160;simplifies&#160;the&#160;implicit&#160;estimation&#160;of&#160;the<br/>
+inputted&#160;color&#160;hints,&#160;generates&#160;a&#160;high-quality&#160;color&#160;image.<br/>
+coloring&#160;distribution.<br/>
+We&#160;prefer&#160;to&#160;colorize&#160;the&#160;entire&#160;page&#160;rather&#160;than&#160;individual<br/>
+We&#160;describe&#160;the&#160;architecture&#160;and&#160;loss&#160;functions&#160;of&#160;the<br/>
+panels&#160;for&#160;the&#160;following&#160;reason.&#160;Manga,&#160;especially&#160;modern<br/>
+drafting&#160;model&#160;and&#160;the&#160;colorization&#160;model,&#160;as&#160;well&#160;as&#160;the&#160;ideas<br/>
+manga,&#160;often&#160;have&#160;non-trivial&#160;shapes&#160;and&#160;arrangement&#160;of<br/>
+that&#160;include&#160;in&#160;their&#160;design,&#160;in&#160;Section&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">III-A&#160;</a>and&#160;Section&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">III-B</a><br/>
+panels,&#160;which&#160;makes&#160;automatic&#160;splitting&#160;quite&#160;a&#160;challenge&#160;by<br/>
+correspondingly.<br/>
+itself.&#160;In&#160;addition,&#160;some&#160;pages&#160;contain&#160;overlapping&#160;panels,<br/>objects&#160;or&#160;speech&#160;balloons&#160;may&#160;overlap&#160;several&#160;panels&#160;at&#160;once,<br/>making&#160;splitting&#160;impossible.&#160;Meanwhile,&#160;the&#160;manga&#160;page&#160;has<br/>
+A.&#160;DRAFTING&#160;NETWORK<br/>
+only&#160;two&#160;possible&#160;shapes,&#160;like&#160;a&#160;majority&#160;of&#160;other&#160;books<br/>
+During&#160;the&#160;training&#160;of&#160;the&#160;colorization&#160;network,&#160;which<br/>
+(rectangle&#160;with&#160;a&#160;‘‘portrait’’&#160;and&#160;‘‘landscape’’&#160;orientation),<br/>
+receives&#160;only&#160;color&#160;hints,&#160;we&#160;noticed&#160;that&#160;when&#160;there&#160;are&#160;few<br/>
+and&#160;doesn’t&#160;require&#160;such&#160;kind&#160;of&#160;preprocessing.<br/>
+or&#160;no&#160;color&#160;hints,&#160;our&#160;model&#160;gives&#160;preference&#160;to&#160;a&#160;few&#160;colors<br/>
+We&#160;train&#160;our&#160;model&#160;using&#160;paired&#160;data&#160;with&#160;synthetic&#160;black-<br/>
+when&#160;colorizing&#160;images&#160;of&#160;any&#160;style&#160;and&#160;content,&#160;which<br/>
+and-white&#160;images&#160;generated&#160;from&#160;color&#160;ones&#160;and&#160;unpaired<br/>
+means&#160;it&#160;generates&#160;colors&#160;from&#160;a&#160;certain&#160;mode,&#160;ignoring&#160;all<br/>
+real&#160;black-and-white&#160;images.&#160;Training&#160;consists&#160;of&#160;two&#160;steps.<br/>
+others.&#160;On&#160;the&#160;one&#160;hand,&#160;it&#160;worsens&#160;the&#160;automatic&#160;colorization<br/>
+In&#160;the&#160;first&#160;step,&#160;we&#160;train&#160;only&#160;the&#160;colorization&#160;network<br/>
+of&#160;images,&#160;and&#160;on&#160;the&#160;other&#160;hand,&#160;it&#160;impedes&#160;training.<br/>
+using&#160;synthetic&#160;data&#160;for&#160;supervised&#160;training&#160;and&#160;real&#160;data<br/>
+We&#160;also&#160;observed&#160;that&#160;our&#160;model&#160;is&#160;able&#160;to&#160;change&#160;this&#160;color<br/>
+for&#160;adversarial&#160;domain&#160;adaptation.&#160;It&#160;means&#160;that&#160;we&#160;use<br/>
+mode&#160;within&#160;a&#160;few&#160;hundred&#160;training&#160;iterations,&#160;depending<br/>
+the&#160;discriminator&#160;not&#160;only&#160;to&#160;distinguish&#160;between&#160;real&#160;color<br/>
+on&#160;the&#160;input&#160;images.&#160;Such&#160;behavior&#160;is&#160;understandable&#160;since<br/>
+images&#160;and&#160;colorized&#160;synthetic&#160;images&#160;but&#160;also&#160;between&#160;the<br/>
+colorization&#160;is&#160;a&#160;multimodal&#160;task&#160;that&#160;implies&#160;a&#160;variety&#160;of<br/>
+real&#160;color&#160;images&#160;and&#160;colorized&#160;real&#160;black-and-white&#160;images.<br/>
+acceptable&#160;outputs&#160;for&#160;a&#160;single&#160;input.&#160;Therefore,&#160;reducing&#160;the<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111583<br/>
+<hr/>
+<a name=4></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-4_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-4_2.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-4_3.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-4_4.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-4_5.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;2.&#160;</b>Example&#160;of&#160;training&#160;data:&#160;black-and-white&#160;image,&#160;color&#160;image,&#160;color&#160;hint,&#160;coloring&#160;draft.&#160;The&#160;first&#160;two&#160;images&#160;represent<br/>black-and-white&#160;and&#160;color&#160;versions&#160;of&#160;the&#160;same&#160;manga&#160;page.&#160;The&#160;third&#160;image&#160;corresponds&#160;to&#160;a&#160;random&#160;color&#160;hint&#160;generated&#160;with&#160;the<br/>color&#160;image.&#160;The&#160;fourth&#160;image&#160;is&#160;a&#160;coloring&#160;draft&#160;generated&#160;with&#160;the&#160;color&#160;image.<br/>
+set&#160;of&#160;acceptable&#160;solutions&#160;by&#160;setting&#160;a&#160;constraint&#160;using&#160;a<br/>
+can&#160;be&#160;replaced&#160;by&#160;a&#160;three-dimensional&#160;vector.&#160;To&#160;sum&#160;up,<br/>
+coloring&#160;draft&#160;helps&#160;us&#160;to&#160;simplify&#160;the&#160;colorization&#160;task&#160;for&#160;the<br/>
+we&#160;choose&#160;the&#160;minimum&#160;blur&#160;level&#160;that&#160;can&#160;be&#160;reproduced&#160;by<br/>
+colorization&#160;network&#160;and&#160;to&#160;get&#160;a&#160;better&#160;model&#160;after&#160;training.<br/>
+the&#160;projection&#160;method.<br/>
+We&#160;do&#160;not&#160;expect&#160;the&#160;model&#160;to&#160;be&#160;able&#160;to&#160;generate<br/>
+We&#160;use&#160;the&#160;Pixel2Style2Pixel&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[43]&#160;architecture&#160;</a>for&#160;this<br/>
+high-quality&#160;images&#160;and,&#160;as&#160;will&#160;be&#160;shown&#160;later,&#160;it&#160;is&#160;not<br/>
+model.&#160;Neural&#160;network&#160;receives&#160;a&#160;black-and-white&#160;manga<br/>
+able&#160;to&#160;do&#160;that&#160;because&#160;the&#160;manga&#160;is&#160;quite&#160;complex&#160;data<br/>
+image&#160;<i>X&#160;</i>∈<br/>
+256×256×1<br/>
+R<br/>
+and&#160;outputs&#160;a&#160;coloring&#160;draft&#160;<i>S&#160;</i>∈<br/>
+and&#160;it&#160;would&#160;be&#160;too&#160;audacious&#160;to&#160;expect&#160;that&#160;StyleGAN<br/>
+256×256×3<br/>
+R<br/>
+.&#160;Thus,&#160;the&#160;model&#160;takes&#160;a&#160;manga&#160;image&#160;and&#160;maps<br/>
+can&#160;build&#160;such&#160;a&#160;latent&#160;space&#160;that&#160;can&#160;generate&#160;scenes&#160;of<br/>
+it&#160;into&#160;the&#160;W+&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[44]&#160;space&#160;</a>of&#160;color&#160;manga&#160;images,&#160;meaning<br/>
+arbitrary&#160;content.&#160;We&#160;want&#160;StyleGAN&#160;to&#160;generate&#160;something<br/>
+that&#160;it&#160;selects&#160;a&#160;vector&#160;that&#160;corresponds&#160;to&#160;the&#160;coloring&#160;that<br/>
+in&#160;between&#160;a&#160;color&#160;palette&#160;and&#160;a&#160;usual&#160;color&#160;image&#160;(see&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">3).</a><br/>
+matches&#160;the&#160;input.&#160;Then&#160;the&#160;obtained&#160;vector&#160;is&#160;converted&#160;into<br/>
+We&#160;use&#160;StyleGAN&#160;to&#160;get&#160;a&#160;mapping&#160;between&#160;the&#160;pretrained<br/>
+a&#160;coloring&#160;draft&#160;using&#160;the&#160;pre-trained&#160;StyleGAN.&#160;We&#160;use&#160;the<br/>
+StyleGAN&#160;latent&#160;space&#160;that&#160;has&#160;useful&#160;properties&#160;and&#160;is&#160;called<br/>
+following&#160;loss&#160;for&#160;training:<br/>
+Coloring&#160;Latent&#160;Space&#160;(CLS)&#160;and&#160;the&#160;space&#160;of&#160;coloring&#160;drafts.<br/>
+L<br/>
+We&#160;can&#160;sample&#160;different&#160;colorings&#160;with&#160;the&#160;mapping&#160;network<br/>
+<i>Draft&#160;</i>=&#160;λ<i>MSE&#160;</i>L<i>MSE&#160;</i>+&#160;λ<i>LPIPS&#160;</i>L<i>LPIPS</i><br/>
+(1)<br/>
+of&#160;StyleGAN&#160;and&#160;style&#160;mixing,&#160;thereby&#160;obtaining&#160;multimodal<br/>
+where&#160;L<i>MSE&#160;</i>-&#160;mean&#160;squared&#160;error,&#160;L<i>LPIPS&#160;</i>-&#160;LPIPS&#160;loss<br/>
+coloring&#160;sampling.&#160;We&#160;allow&#160;such&#160;sampling&#160;because&#160;we&#160;want<br/>
+presented&#160;in&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[45].</a><br/>
+the&#160;coloring&#160;draft&#160;to&#160;primarily&#160;affect&#160;the&#160;background&#160;color<br/>
+We&#160;use&#160;a&#160;pixel&#160;level&#160;MSE&#160;loss&#160;to&#160;enforce&#160;the&#160;generator&#160;to<br/>
+and&#160;intractable&#160;objects&#160;and&#160;to&#160;have&#160;little&#160;effect&#160;on&#160;objects<br/>
+produce&#160;similar&#160;colorings&#160;to&#160;the&#160;ground&#160;truth.&#160;LPIPS&#160;loss&#160;is<br/>
+that&#160;have&#160;a&#160;stable&#160;visual&#160;appearance&#160;in&#160;various&#160;manga,&#160;like<br/>
+applied&#160;to&#160;ensure&#160;similarity&#160;not&#160;only&#160;at&#160;the&#160;pixel&#160;level&#160;but&#160;also<br/>
+characters’&#160;faces.&#160;Such&#160;a&#160;degree&#160;of&#160;freedom&#160;is&#160;acceptable<br/>
+at&#160;the&#160;structural&#160;level.<br/>
+because&#160;the&#160;artistic&#160;images&#160;do&#160;not&#160;have&#160;to&#160;represent&#160;the&#160;real<br/>world&#160;and&#160;admit&#160;large&#160;variation&#160;in&#160;the&#160;visual&#160;representation.<br/>
+B.&#160;COLORIZATION&#160;NETWORK<br/>
+Moreover,&#160;the&#160;use&#160;of&#160;style&#160;mixing&#160;increases&#160;the&#160;robustness&#160;of<br/>
+Colorization&#160;network&#160;receives&#160;three&#160;objects:&#160;black-and-white<br/>
+our&#160;approach.&#160;By&#160;choosing&#160;some&#160;vector&#160;and&#160;mixing&#160;it&#160;with&#160;the<br/>
+image&#160;<i>X&#160;</i>∈<br/>
+<i>h</i>×<i>w</i>×1<br/>
+<i>h</i>×<i>w</i>×4<br/>
+R<br/>
+,&#160;color&#160;hint&#160;<i>H&#160;</i>∈&#160;R<br/>
+,&#160;and&#160;coloring<br/>
+predicted&#160;CLS&#160;vectors,&#160;we&#160;can&#160;lock&#160;the&#160;color&#160;appearance&#160;of<br/>
+draft&#160;<i>S&#160;</i>∈<br/>
+<i>h</i>×<i>w</i>×3<br/>
+<i>h</i>×<i>w</i>×3<br/>
+R<br/>
+.&#160;It&#160;outputs&#160;the&#160;color&#160;image&#160;ˆ<br/>
+<i>Y&#160;</i>∈&#160;R<br/>
+color&#160;drafts.&#160;This&#160;way,&#160;spatial&#160;color&#160;distribution&#160;for&#160;different<br/>
+in&#160;RGB&#160;format.&#160;An&#160;example&#160;of&#160;a&#160;training&#160;sample&#160;is&#160;presented<br/>
+views&#160;of&#160;the&#160;same&#160;page&#160;can&#160;be&#160;fastened&#160;by&#160;fixing&#160;the&#160;vector<br/>
+in&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">2.&#160;</a>We&#160;use&#160;fixed&#160;values&#160;of&#160;<i>h&#160;</i>and&#160;<i>w&#160;</i>during&#160;training,<br/>
+of&#160;StyleGAN&#160;latent&#160;space.<br/>
+but&#160;they&#160;may&#160;be&#160;arbitrary&#160;during&#160;inference&#160;since&#160;our&#160;model&#160;is<br/>
+The&#160;use&#160;of&#160;blurred&#160;images&#160;is&#160;caused&#160;by&#160;the&#160;limitations&#160;of<br/>
+fully&#160;convolutional.<br/>
+the&#160;neural&#160;GAN&#160;projection&#160;methods.&#160;If&#160;we&#160;train&#160;StyleGAN&#160;on<br/>
+Similarly&#160;to&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38],&#160;we&#160;</a>used&#160;the&#160;model&#160;proposed&#160;in&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10]&#160;and</a><br/>
+sharper&#160;images,&#160;the&#160;drafting&#160;network&#160;method&#160;still&#160;generates<br/>
+modified&#160;it&#160;for&#160;our&#160;task.&#160;As&#160;a&#160;result,&#160;our&#160;model&#160;looks&#160;as<br/>
+the&#160;same&#160;blurred&#160;images.&#160;In&#160;this&#160;case,&#160;the&#160;latent&#160;vector<br/>
+follows:<br/>
+corresponding&#160;to&#160;the&#160;coloring&#160;draft&#160;will&#160;be&#160;an&#160;outlier&#160;with<br/>respect&#160;to&#160;the&#160;distribution&#160;of&#160;the&#160;latent&#160;vectors&#160;for&#160;the&#160;training<br/>
+1)&#160;GENERATOR<br/>
+dataset.&#160;As&#160;a&#160;result,&#160;style&#160;mixing&#160;for&#160;the&#160;coloring&#160;draft<br/>
+The&#160;generator&#160;has&#160;a&#160;UNet-like&#160;architecture&#160;with&#160;the&#160;SE-<br/>
+does&#160;not&#160;work&#160;properly.&#160;In&#160;other&#160;words,&#160;we&#160;cannot&#160;reduce<br/>
+ResNeXt50&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[46],&#160;[47]&#160;as&#160;</a>an&#160;encoder&#160;that&#160;is&#160;pretrained&#160;for<br/>
+the&#160;blur&#160;level&#160;due&#160;to&#160;the&#160;limited&#160;capabilities&#160;of&#160;modern<br/>
+tag&#160;prediction&#160;with&#160;line&#160;art&#160;anime&#160;data&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[31].&#160;The&#160;</a>other&#160;input<br/>
+neural&#160;projection&#160;methods.&#160;A&#160;slight&#160;increase&#160;in&#160;blur&#160;level<br/>
+branch&#160;is&#160;used&#160;to&#160;propagate&#160;color&#160;from&#160;a&#160;color&#160;hint&#160;and<br/>
+does&#160;not&#160;change&#160;the&#160;results,&#160;but&#160;a&#160;significant&#160;one&#160;worsens<br/>
+coloring&#160;draft.&#160;It&#160;is&#160;a&#160;small&#160;CNN&#160;that&#160;reduces&#160;the&#160;size&#160;of<br/>
+the&#160;performance&#160;because&#160;the&#160;coloring&#160;draft&#160;loses&#160;a&#160;lot&#160;of<br/>
+the&#160;concatenated&#160;image&#160;and&#160;color&#160;hint&#160;to&#160;match&#160;the&#160;size<br/>
+information,&#160;becomes&#160;almost&#160;a&#160;monochrome&#160;image,&#160;and<br/>
+of&#160;the&#160;encoder&#160;output.&#160;In&#160;contrast&#160;to&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10],&#160;</a>we&#160;replaced<br/>
+111584<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=5></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-5_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-5_2.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-5_3.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-5_4.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-5_5.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+building&#160;a&#160;training&#160;set:&#160;data&#160;collection,&#160;data&#160;processing,&#160;and<br/>diversification&#160;methods.&#160;Then&#160;in&#160;Section&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">IV-B&#160;</a>we&#160;describe<br/>the&#160;training&#160;process.&#160;In&#160;Section&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">IV-C,&#160;</a>the&#160;training&#160;results<br/>are&#160;presented.&#160;We&#160;give&#160;illustrative&#160;examples&#160;of&#160;our&#160;model’s<br/>work&#160;to&#160;prove&#160;that&#160;our&#160;approach&#160;works.&#160;We&#160;perform&#160;a&#160;visual<br/>and&#160;quantitative&#160;comparison&#160;of&#160;the&#160;models&#160;to&#160;confirm&#160;the<br/>
+<b>FIGURE&#160;3.&#160;</b>Color&#160;images&#160;and&#160;corresponding&#160;coloring&#160;drafts.&#160;The&#160;coloring<br/>
+effectiveness&#160;of&#160;the&#160;proposed&#160;ideas&#160;in&#160;Section&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#7">IV-D.</a><br/>
+draft&#160;looks&#160;like&#160;a&#160;blurred&#160;version&#160;of&#160;the&#160;color&#160;image.<br/>
+A.&#160;DATASET<br/>
+ResNeXt&#160;blocks&#160;with&#160;SE-ResNext&#160;blocks&#160;in&#160;the&#160;decoder.<br/>
+1)&#160;DATA&#160;COLLECTION<br/>
+We&#160;noticed&#160;that&#160;utilization&#160;of&#160;the&#160;Squeeze-and-Excitation<br/>
+We&#160;used&#160;web&#160;scraping&#160;to&#160;build&#160;our&#160;dataset.&#160;In&#160;total,<br/>
+operation&#160;increases&#160;the&#160;capacity&#160;and&#160;simplifies&#160;training.<br/>
+approximately&#160;82,000&#160;images&#160;of&#160;color&#160;manga&#160;pages&#160;have<br/>been&#160;collected.&#160;Moreover,&#160;around&#160;40000&#160;color&#160;manga&#160;images<br/>
+2)&#160;DISCRIMINATOR<br/>
+from&#160;the&#160;Danbooru&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[51]&#160;dataset&#160;</a>were&#160;employed.&#160;In&#160;order&#160;to<br/>
+We&#160;use&#160;the&#160;discriminator&#160;architecture&#160;from&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10].&#160;The&#160;</a>only<br/>
+improve&#160;the&#160;generalizability&#160;and&#160;perform&#160;model&#160;comparison,<br/>
+difference&#160;is&#160;that&#160;we&#160;apply&#160;spectral&#160;normalization&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[48]</a><br/>
+we&#160;have&#160;collected&#160;a&#160;lot&#160;of&#160;titles&#160;of&#160;different&#160;styles&#160;that<br/>
+to&#160;convolutional&#160;layers.&#160;We&#160;have&#160;noticed&#160;that&#160;applying<br/>
+have&#160;only&#160;the&#160;black-and-white&#160;version.&#160;They&#160;totaled&#160;about<br/>
+WGAN-GP&#160;loss&#160;results&#160;in&#160;colorizations&#160;that&#160;are&#160;not&#160;as<br/>
+55,000&#160;images.&#160;For&#160;testing&#160;and&#160;comparison&#160;purposes,&#160;we&#160;used<br/>
+colorful&#160;as&#160;those&#160;obtained&#160;with&#160;classic&#160;GAN&#160;loss,&#160;and&#160;its<br/>
+the&#160;Manga109&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[52],&#160;[53].&#160;It&#160;</a>is&#160;the&#160;biggest&#160;public&#160;manga<br/>
+calculation&#160;requires&#160;more&#160;time&#160;and&#160;resources&#160;because&#160;of<br/>
+dataset&#160;that&#160;is&#160;composed&#160;of&#160;109&#160;manga&#160;volumes&#160;drawn&#160;by<br/>
+the&#160;gradient&#160;penalty.&#160;However,&#160;the&#160;classic&#160;adversarial&#160;loss<br/>
+professional&#160;manga&#160;artists,&#160;which&#160;is&#160;around&#160;21000&#160;black-<br/>
+function&#160;is&#160;quite&#160;unstable,&#160;resulting&#160;in&#160;artifacts&#160;in&#160;the&#160;image<br/>
+and-white&#160;manga&#160;page&#160;images.&#160;This&#160;dataset&#160;contains&#160;a&#160;lot&#160;of<br/>
+and&#160;even&#160;divergence,&#160;so&#160;we&#160;use&#160;spectral&#160;normalization&#160;as<br/>
+manga&#160;created&#160;in&#160;the&#160;80s&#160;and&#160;90s,&#160;which&#160;have&#160;significant&#160;style<br/>
+a&#160;compromise&#160;since&#160;it&#160;stabilizes&#160;the&#160;discriminator&#160;training<br/>
+differences&#160;from&#160;the&#160;manga&#160;we&#160;utilize&#160;in&#160;training.&#160;So&#160;we&#160;use<br/>
+and&#160;reduces&#160;generator&#160;loss&#160;weights&#160;sensitivity&#160;without&#160;any<br/>
+it&#160;to&#160;show&#160;how&#160;well&#160;our&#160;model&#160;generalizes&#160;and&#160;performs&#160;on<br/>
+significant&#160;computational&#160;overhead.<br/>
+unfamiliar&#160;manga&#160;styles.<br/>
+We&#160;employ&#160;the&#160;method&#160;proposed&#160;in&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10]&#160;to&#160;</a>simulate&#160;color<br/>
+hints&#160;during&#160;training.<br/>
+2)&#160;DATA&#160;MATCHING<br/>
+In&#160;the&#160;first&#160;step&#160;of&#160;training,&#160;we&#160;use&#160;adversarial&#160;adaptation<br/>
+We&#160;have&#160;collected&#160;a&#160;large&#160;number&#160;of&#160;pairs&#160;of&#160;black-<br/>
+approach&#160;since&#160;the&#160;synthetic&#160;data&#160;is&#160;quite&#160;different&#160;from<br/>
+and-white&#160;and&#160;color&#160;manga,&#160;but&#160;they&#160;were&#160;obtained&#160;from<br/>
+the&#160;real&#160;data,&#160;and&#160;the&#160;model&#160;trained&#160;only&#160;with&#160;synthetic<br/>
+different&#160;sources.&#160;Therefore,&#160;they&#160;may&#160;contain&#160;different<br/>
+data&#160;colorizes&#160;the&#160;real&#160;ones&#160;poorly.&#160;However,&#160;the&#160;quality<br/>
+translations,&#160;fonts,&#160;and&#160;even&#160;drawings.&#160;Moreover,&#160;the&#160;images<br/>
+of&#160;the&#160;model&#160;on&#160;real&#160;data&#160;changes&#160;a&#160;lot&#160;during&#160;training,<br/>
+of&#160;compatible&#160;pages&#160;may&#160;be&#160;different&#160;because&#160;most&#160;manga<br/>
+so&#160;we&#160;pick&#160;snapshots&#160;with&#160;better&#160;performance&#160;and&#160;generate<br/>
+are&#160;published&#160;on&#160;paper&#160;and&#160;then&#160;digitized,&#160;so&#160;the&#160;images<br/>
+pseudolabels&#160;for&#160;real&#160;data&#160;to&#160;use&#160;it&#160;in&#160;supervised&#160;training,<br/>
+have&#160;different&#160;sizes&#160;and&#160;indents&#160;from&#160;the&#160;edges.&#160;All&#160;of&#160;this<br/>
+which&#160;is&#160;considerably&#160;more&#160;stable.&#160;The&#160;performance&#160;of&#160;the<br/>
+leads&#160;to&#160;the&#160;fact&#160;that&#160;we&#160;cannot&#160;establish&#160;the&#160;pixel-by-pixel<br/>
+snapshots&#160;is&#160;manually&#160;evaluated&#160;with&#160;human&#160;assistance.&#160;As&#160;a<br/>
+correspondence&#160;that&#160;is&#160;necessary&#160;to&#160;train&#160;the&#160;Pix2Pix&#160;model.<br/>
+result,&#160;our&#160;loss&#160;function&#160;for&#160;the&#160;first&#160;step&#160;looks&#160;as&#160;follows:<br/>
+We&#160;tried&#160;to&#160;exploit&#160;the&#160;following&#160;fact&#160;to&#160;establish&#160;a&#160;pixel-<br/>
+by-pixel&#160;correspondence:&#160;the&#160;colored&#160;images&#160;have&#160;black<br/>
+L<i>G&#160;</i>=&#160;λ<i>MAE&#160;</i>L<i>MAE&#160;</i>+&#160;λ<i>per&#160;</i>L<i>per&#160;</i>+&#160;λ<i>synthetic</i>L<i>synthetic</i><br/>
+<i>Gadv</i><br/>
+borders&#160;that&#160;constitute&#160;the&#160;black-and-white&#160;image,&#160;so&#160;the<br/>
++&#160;λ<i>G&#160;</i>L<i>real&#160;</i>,<br/>
+(2)<br/>
+correspondence&#160;can&#160;be&#160;established&#160;not&#160;between&#160;the&#160;images<br/>
+<i>real</i><br/>
+<i>Gadv</i><br/>
+but&#160;only&#160;between&#160;their&#160;black&#160;pixels.<br/>
+L<i>D&#160;</i>=&#160;L<i>synthetic&#160;</i>+&#160;λ<i>D&#160;</i>L<i>real&#160;</i>,<br/>
+(3)<br/>
+<i>Dadv</i><br/>
+<i>real</i><br/>
+<i>Dadv</i><br/>
+The&#160;following&#160;procedure&#160;was&#160;used&#160;to&#160;measure&#160;image<br/>
+where&#160;L<br/>
+correspondence:<br/>
+<i>MAE&#160;</i>-&#160;mean&#160;absolute&#160;error&#160;(MAE),&#160;L<i>per&#160;</i>-&#160;perceptual<br/>
+loss&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[49],&#160;L</a><i>G</i><br/>
+and&#160;L<br/>
+-&#160;classic&#160;adversarial&#160;loss&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[50].</a><br/>
+1)&#160;Cut&#160;off&#160;several&#160;rows&#160;and&#160;columns&#160;of&#160;pixels&#160;from&#160;the<br/>
+<i>adv</i><br/>
+<i>Dadv</i><br/>
+The&#160;L<i>synthetic&#160;</i>and&#160;L<i>synthetic&#160;</i>are&#160;calculated&#160;for&#160;real&#160;color<br/>
+edges&#160;of&#160;the&#160;color&#160;image.<br/>
+<i>Gadv</i><br/>
+<i>Dadv</i><br/>
+and&#160;synthetic&#160;black-and-white&#160;images,&#160;and&#160;the&#160;L<i>real&#160;</i>and<br/>
+2)&#160;Resize&#160;the&#160;obtained&#160;image&#160;to&#160;the&#160;size&#160;of&#160;black-and-<br/>
+<i>Gadv</i><br/>
+L<i>real&#160;</i>are&#160;calculated&#160;for&#160;real&#160;color&#160;and&#160;real&#160;black-and-white<br/>
+white.<br/>
+<i>Dadv</i><br/>
+images.&#160;The&#160;adversarial&#160;loss&#160;in&#160;the&#160;second&#160;step&#160;is&#160;calculated<br/>
+3)&#160;Build&#160;a&#160;black&#160;pixel&#160;mask&#160;based&#160;on&#160;a&#160;color&#160;image<br/>
+for&#160;synthetic&#160;and&#160;real&#160;data&#160;simultaneously.&#160;For&#160;a&#160;formal<br/>
+4)&#160;Apply&#160;this&#160;mask&#160;to&#160;the&#160;black-and-white&#160;image.<br/>
+description&#160;of&#160;the&#160;loss&#160;functions,&#160;see&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">AppendixC.</a><br/>
+5)&#160;Calculate&#160;the&#160;error&#160;as&#160;a&#160;deviation&#160;of&#160;pixels&#160;correspond-<br/>
+ing&#160;to&#160;the&#160;mask&#160;from&#160;the&#160;black.<br/>
+<b>IV.&#160;EXPERIMENTS</b><br/>
+Thus,&#160;we&#160;can&#160;build&#160;a&#160;match&#160;for&#160;black-and-white&#160;and&#160;color<br/>
+In&#160;this&#160;section,&#160;we&#160;describe&#160;the&#160;work&#160;with&#160;data&#160;and&#160;neural<br/>
+images&#160;whose&#160;content&#160;differs&#160;only&#160;by&#160;color.&#160;Unfortunately,<br/>
+networks.&#160;In&#160;Section&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">IV-A,&#160;</a>we&#160;describe&#160;the&#160;process&#160;of<br/>
+our&#160;algorithm&#160;is&#160;not&#160;suitable&#160;for&#160;images&#160;with&#160;different&#160;content,<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111585<br/>
+<hr/>
+<a name=6></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-6_1.png"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+and&#160;most&#160;of&#160;the&#160;pairs&#160;we&#160;collected&#160;are&#160;exactly&#160;like&#160;that.<br/>
+B.&#160;TRAINING<br/>
+We&#160;were&#160;only&#160;able&#160;to&#160;build&#160;a&#160;correspondence&#160;for&#160;the&#160;Demon<br/>
+The&#160;models&#160;are&#160;implemented&#160;with&#160;PyTorch&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[56]&#160;library</a><br/>
+Slayer&#160;manga&#160;images,&#160;and&#160;its&#160;colorized&#160;images&#160;are&#160;only&#160;about<br/>
+for&#160;Python.&#160;The&#160;optimization&#160;is&#160;performed&#160;with&#160;Adam<br/>
+1000,&#160;so&#160;we&#160;can’t&#160;directly&#160;learn&#160;how&#160;to&#160;map&#160;black-and-white<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[57]&#160;because&#160;</a>it&#160;has&#160;fast&#160;convergence&#160;in&#160;most&#160;cases&#160;and<br/>
+manga&#160;to&#160;color.&#160;However,&#160;the&#160;obtained&#160;pairs&#160;are&#160;used&#160;for<br/>
+it’s&#160;especially&#160;well-suited&#160;for&#160;GAN&#160;training.&#160;Image&#160;aug-<br/>
+fine-tuning&#160;and&#160;play&#160;an&#160;important&#160;role&#160;in&#160;model&#160;training.<br/>
+mentations&#160;are&#160;performed&#160;with&#160;the&#160;Albumentations&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[58].<br/></a>We&#160;use&#160;a&#160;device&#160;with&#160;NVIDIA&#160;Tesla&#160;A100&#160;80Gb&#160;for<br/>computing.&#160;We&#160;employ&#160;the&#160;following&#160;training&#160;process&#160;for&#160;our<br/>
+3)&#160;DATA&#160;GENERATION<br/>
+models:<br/>
+Synthetic&#160;black-and-white&#160;images&#160;are&#160;generated&#160;from&#160;color<br/>ones&#160;to&#160;build&#160;a&#160;paired&#160;dataset&#160;for&#160;supervised&#160;training.<br/>
+1)&#160;StyleGAN<br/>
+However,&#160;we&#160;are&#160;not&#160;able&#160;to&#160;create&#160;a&#160;paired&#160;dataset&#160;by<br/>
+We&#160;have&#160;trained&#160;this&#160;model&#160;for&#160;unconditional&#160;manga<br/>
+transforming&#160;color&#160;images&#160;to&#160;grayscale&#160;with&#160;a&#160;weighted&#160;sum<br/>
+generation&#160;since&#160;we&#160;have&#160;to&#160;use&#160;a&#160;pretrained&#160;generator&#160;in<br/>
+of&#160;channels&#160;because&#160;the&#160;pixel&#160;distribution&#160;of&#160;manga&#160;images<br/>
+the&#160;drafting&#160;network.&#160;All&#160;collected&#160;color&#160;manga&#160;images,<br/>
+significantly&#160;differs&#160;from&#160;pixel&#160;distribution&#160;of&#160;color&#160;image<br/>
+which&#160;are&#160;about&#160;120,000,&#160;were&#160;used.&#160;We&#160;limited&#160;the&#160;size<br/>
+channels,&#160;so&#160;a&#160;model&#160;trained&#160;with&#160;these&#160;data&#160;would&#160;poorly<br/>
+of&#160;images&#160;to&#160;256&#160;×&#160;256&#160;since&#160;StyleGAN&#160;requires&#160;a&#160;lot<br/>
+generalize&#160;on&#160;real&#160;black-and-white&#160;manga&#160;images.&#160;Therefore,<br/>
+of&#160;computational&#160;power.&#160;Several&#160;models&#160;were&#160;trained&#160;for<br/>
+we&#160;use&#160;the&#160;following&#160;sequence&#160;of&#160;preprocessing&#160;steps&#160;to<br/>
+comparison:&#160;StyleGAN2&#160;with&#160;randomly&#160;initialized&#160;weights<br/>
+generate&#160;plausible&#160;synthetic&#160;data:<br/>
+and&#160;parameters&#160;corresponding&#160;to&#160;the&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[13],&#160;</a>StyleGAN2<br/>
+1)&#160;We&#160;apply&#160;the&#160;xDoG&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[54]&#160;algorithm&#160;</a>for&#160;edge&#160;detection<br/>
+pretrained&#160;with&#160;the&#160;Celeba&#160;HQ&#160;dataset&#160;with&#160;parameters<br/>
+to&#160;the&#160;color&#160;data.&#160;It&#160;generates&#160;more&#160;visually&#160;appealing<br/>
+corresponding&#160;to&#160;the&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[13],&#160;and&#160;</a>StyleGAN2&#160;and&#160;StyleGAN3<br/>
+images&#160;than&#160;classic&#160;methods&#160;like&#160;Canny&#160;edge&#160;detector<br/>
+pretrained&#160;with&#160;the&#160;Danbooru&#160;dataset&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[51].</a><br/>
+or&#160;Sobel&#160;operator,&#160;and&#160;it’s&#160;frequently&#160;used&#160;in&#160;line-art<br/>colorization.&#160;The&#160;algorithm&#160;extracts&#160;the&#160;borders&#160;and<br/>
+2)&#160;DRAFTING&#160;NETWORK<br/>
+objects&#160;with&#160;high&#160;quality,&#160;but&#160;the&#160;obtained&#160;images&#160;are<br/>
+We&#160;trained&#160;the&#160;drafting&#160;network&#160;for&#160;two&#160;tasks:&#160;mapping<br/>
+much&#160;more&#160;sparse&#160;than&#160;most&#160;manga&#160;styles&#160;therefore<br/>
+synthetic&#160;black-and-white&#160;images&#160;into&#160;a&#160;CLS&#160;vector&#160;that<br/>
+training&#160;with&#160;such&#160;data&#160;would&#160;result&#160;in&#160;poor&#160;perfor-<br/>
+corresponds&#160;to&#160;the&#160;appropriate&#160;coloring&#160;draft,&#160;and&#160;GAN<br/>
+mance&#160;on&#160;real&#160;data.&#160;We&#160;use&#160;parameters&#160;similar&#160;to&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38].</a><br/>
+inversion,&#160;which&#160;means&#160;mapping&#160;color&#160;manga&#160;images&#160;into<br/>
+2)&#160;We&#160;train&#160;and&#160;apply&#160;a&#160;neural&#160;network&#160;to&#160;map&#160;images<br/>
+CLS.&#160;We&#160;chose&#160;the&#160;loss&#160;weights&#160;without&#160;profound&#160;reasoning<br/>
+generated&#160;with&#160;xDoG&#160;to&#160;real&#160;black-and-white&#160;images.<br/>
+because&#160;the&#160;network&#160;generates&#160;intermediate&#160;results,&#160;and<br/>
+To&#160;build&#160;a&#160;paired&#160;dataset,&#160;we&#160;apply&#160;xDoG&#160;to&#160;the&#160;output<br/>
+its&#160;quality&#160;is&#160;difficult&#160;to&#160;evaluate.&#160;The&#160;λ<i>pr&#160;</i>parameter&#160;was<br/>
+domain&#160;images.&#160;Then&#160;we&#160;use&#160;the&#160;trained&#160;model&#160;to<br/>
+chosen&#160;large&#160;enough&#160;to&#160;affect&#160;the&#160;result&#160;but&#160;did&#160;not&#160;impede<br/>
+transform&#160;the&#160;data&#160;generated&#160;in&#160;the&#160;first&#160;step.&#160;The<br/>
+the&#160;training.&#160;We&#160;also&#160;trained&#160;several&#160;models&#160;with&#160;different<br/>
+predicted&#160;images&#160;are&#160;more&#160;similar&#160;to&#160;the&#160;real&#160;data<br/>
+dimensionality&#160;of&#160;CLS&#160;to&#160;find&#160;out&#160;its&#160;influence&#160;on&#160;the<br/>
+but&#160;have&#160;noticeable&#160;differences&#160;at&#160;the&#160;pixel&#160;level.&#160;The<br/>
+result.<br/>
+architecture&#160;of&#160;the&#160;model&#160;is&#160;similar&#160;to&#160;the&#160;colorization<br/>network.<br/>
+3)&#160;COLORIZATION&#160;NETWORK<br/>
+3)&#160;The&#160;CUT&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[55]&#160;model&#160;</a>is&#160;applied&#160;to&#160;perform&#160;unidirec-<br/>
+We&#160;use&#160;small&#160;batch&#160;size&#160;and&#160;short&#160;training&#160;duration&#160;since&#160;the<br/>
+tional&#160;domain&#160;translation&#160;from&#160;the&#160;domain&#160;of&#160;images<br/>
+model&#160;overfits&#160;with&#160;synthetic&#160;data&#160;even&#160;if&#160;we&#160;use&#160;real&#160;data<br/>
+generated&#160;at&#160;the&#160;previous&#160;step&#160;into&#160;the&#160;domain&#160;of&#160;real<br/>
+along&#160;with&#160;it.&#160;Following&#160;the&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[59],&#160;the&#160;</a>imbalanced&#160;learning<br/>
+images.&#160;The&#160;model&#160;is&#160;trained&#160;on&#160;64&#160;×&#160;64&#160;crops&#160;to<br/>
+rate&#160;is&#160;applied&#160;to&#160;equalize&#160;the&#160;number&#160;of&#160;weight&#160;updates<br/>
+properly&#160;estimate&#160;the&#160;pixel&#160;distribution&#160;of&#160;the&#160;target<br/>
+for&#160;the&#160;generator&#160;and&#160;the&#160;discriminator.&#160;Coloring&#160;drafts<br/>
+domain&#160;images.<br/>
+for&#160;color&#160;images&#160;and&#160;self-training&#160;colorings&#160;are&#160;generated<br/>using&#160;the&#160;GAN&#160;inversion&#160;model&#160;rather&#160;than&#160;the&#160;drafting<br/>
+Since&#160;we&#160;are&#160;using&#160;a&#160;training&#160;dataset&#160;consisting&#160;of<br/>
+model&#160;to&#160;avoid&#160;overfitting.&#160;We&#160;performed&#160;a&#160;grid&#160;search<br/>
+100,000&#160;images,&#160;the&#160;employment&#160;of&#160;data&#160;augmentations<br/>
+to&#160;determine&#160;the&#160;optimal&#160;loss&#160;weights&#160;and&#160;found&#160;that&#160;the<br/>
+for&#160;diversification&#160;is&#160;beneficial.&#160;To&#160;prevent&#160;overfitting&#160;with<br/>
+balance&#160;between&#160;the&#160;MAE&#160;and&#160;perceptual&#160;losses&#160;does&#160;not<br/>
+image&#160;border&#160;margins,&#160;we&#160;apply&#160;horizontal&#160;flipping&#160;and<br/>
+significantly&#160;affect&#160;the&#160;final&#160;result,&#160;although&#160;omitting&#160;one<br/>
+random&#160;cropping.&#160;Since&#160;the&#160;number&#160;of&#160;gray&#160;pixels&#160;in&#160;the<br/>
+of&#160;them&#160;does.&#160;Meanwhile,&#160;the&#160;weight&#160;of&#160;the&#160;adversarial<br/>
+image&#160;depends&#160;on&#160;the&#160;style&#160;and&#160;varies&#160;a&#160;lot,&#160;but&#160;it&#160;does&#160;not<br/>
+loss&#160;is&#160;quite&#160;sensitive,&#160;so&#160;its&#160;slight&#160;change&#160;may&#160;lead&#160;to&#160;a<br/>
+change&#160;much&#160;in&#160;synthetic&#160;data,&#160;we&#160;also&#160;apply&#160;color&#160;jitter<br/>
+disturbance&#160;of&#160;the&#160;training&#160;balance&#160;between&#160;the&#160;generator&#160;and<br/>
+augmentation.<br/>
+the&#160;discriminator&#160;resulting&#160;in&#160;unsuccessful&#160;training.<br/>
+For&#160;data&#160;description&#160;and&#160;details&#160;of&#160;data&#160;augmentation,&#160;see<br/>
+For&#160;training&#160;details&#160;and&#160;hyperparameters&#160;values,&#160;see<br/>
+Appendix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">B.</a><br/>
+Appendix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">D.</a><br/>
+111586<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=7></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-7_1.png"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+C.&#160;RESULTS<br/>
+D.&#160;MODEL&#160;COMPARISON<br/>
+1)&#160;MANGA&#160;GENERATION&#160;WITH&#160;STYLEGAN<br/>
+Two&#160;datasets&#160;are&#160;used&#160;for&#160;the&#160;comparison.&#160;Firstly,&#160;we&#160;employ<br/>
+The&#160;first&#160;model&#160;with&#160;randomly&#160;initialized&#160;weights&#160;failed&#160;to<br/>
+a&#160;holdout&#160;set&#160;consisting&#160;of&#160;5000&#160;randomly&#160;selected&#160;black-<br/>
+learn&#160;our&#160;dataset.&#160;We&#160;have&#160;tried&#160;various&#160;combinations&#160;of<br/>
+and-white&#160;images&#160;of&#160;the&#160;collected&#160;dataset,&#160;which&#160;are&#160;not<br/>
+hyperparameters,&#160;but&#160;training&#160;still&#160;led&#160;to&#160;a&#160;divergence&#160;or&#160;mode<br/>
+used&#160;for&#160;domain&#160;adaptation&#160;and&#160;self-training.&#160;Secondly,<br/>
+collapse.&#160;The&#160;second,&#160;third,&#160;and&#160;fourth&#160;models&#160;were&#160;able<br/>
+we&#160;use&#160;the&#160;Manga109&#160;dataset,&#160;which&#160;contains&#160;manga<br/>
+to&#160;converge,&#160;with&#160;the&#160;third&#160;and&#160;fourth&#160;models&#160;beginning&#160;to<br/>
+titles&#160;that&#160;are&#160;not&#160;presented&#160;in&#160;the&#160;first&#160;dataset.&#160;Thus,<br/>
+generate&#160;quality&#160;images&#160;much&#160;earlier&#160;than&#160;the&#160;second.&#160;The<br/>
+the&#160;image&#160;style&#160;of&#160;the&#160;first&#160;dataset&#160;is&#160;familiar&#160;to&#160;the<br/>
+objects&#160;in&#160;the&#160;generated&#160;images&#160;still&#160;do&#160;not&#160;always&#160;have&#160;a<br/>
+models,&#160;as&#160;other&#160;images&#160;sharing&#160;these&#160;styles&#160;were&#160;used<br/>
+sharp&#160;shape.&#160;However,&#160;the&#160;images,&#160;in&#160;general,&#160;are&#160;strongly<br/>
+in&#160;training&#160;explicitly&#160;or&#160;implicitly.&#160;In&#160;contrast,&#160;images<br/>
+reminiscent&#160;of&#160;color&#160;manga.<br/>
+of&#160;the&#160;second&#160;dataset&#160;have&#160;styles&#160;previously&#160;unseen&#160;by<br/>
+The&#160;obtained&#160;CLS&#160;supports&#160;style&#160;mixing.&#160;This&#160;way,&#160;it&#160;is<br/>
+models,&#160;so&#160;we&#160;use&#160;them&#160;to&#160;estimate&#160;the&#160;degree&#160;of&#160;perfor-<br/>
+possible&#160;to&#160;transfer&#160;the&#160;color&#160;scheme&#160;of&#160;one&#160;image&#160;to&#160;another.<br/>
+mance&#160;degradation&#160;with&#160;the&#160;introduction&#160;of&#160;new&#160;drawing<br/>
+We&#160;calculated&#160;the&#160;FID&#160;metric&#160;to&#160;compare&#160;the&#160;quality&#160;of&#160;the<br/>
+styles.<br/>
+models&#160;and&#160;it&#160;was&#160;equal&#160;to&#160;8.3&#160;for&#160;the&#160;second&#160;model,&#160;3.6&#160;for<br/>
+We&#160;utilize&#160;existing&#160;methods&#160;of&#160;image&#160;translation&#160;and<br/>
+the&#160;third,&#160;and&#160;4.1&#160;for&#160;the&#160;fourth.&#160;Due&#160;to&#160;the&#160;worse&#160;results<br/>
+manga&#160;colorization&#160;to&#160;show&#160;the&#160;superiority&#160;of&#160;our&#160;approach<br/>
+and&#160;the&#160;higher&#160;computational&#160;complexity&#160;of&#160;StyleGAN3,<br/>
+in&#160;automatic&#160;colorization.&#160;Quantitative&#160;and&#160;qualitative&#160;(unless<br/>
+we&#160;decided&#160;to&#160;stick&#160;with&#160;StyleGAN2.<br/>
+otherwise&#160;specified)&#160;comparisons&#160;are&#160;performed&#160;in&#160;fully<br/>automatic&#160;mode,&#160;i.e.,&#160;without&#160;user&#160;input&#160;like&#160;color&#160;hints.<br/>We&#160;train&#160;Pix2Pix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[18]&#160;on&#160;</a>a&#160;synthetic&#160;paired&#160;dataset.&#160;AlacGAN<br/>
+2)&#160;DRAFTING&#160;NETWORK<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10]&#160;and&#160;</a>the&#160;model&#160;from&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38]&#160;are&#160;</a>trained&#160;according&#160;to<br/>
+We&#160;tried&#160;to&#160;train&#160;the&#160;model&#160;to&#160;map&#160;input&#160;images&#160;into&#160;vectors<br/>
+the&#160;procedures&#160;described&#160;in&#160;the&#160;corresponding&#160;papers.<br/>
+that&#160;correspond&#160;to&#160;color&#160;manga&#160;images.&#160;Yet,&#160;the&#160;resulting<br/>
+Style2Paint&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[8]&#160;and&#160;</a>ScreenStyle&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[36]&#160;hav</a>e&#160;no&#160;training<br/>
+models&#160;generate&#160;images&#160;consisting&#160;of&#160;several&#160;panels&#160;that<br/>
+code&#160;in&#160;the&#160;public&#160;domain&#160;and&#160;we&#160;were&#160;unsuccessful&#160;in<br/>
+contain&#160;blurry&#160;color&#160;blobs.&#160;From&#160;the&#160;examples,&#160;it&#160;can&#160;be<br/>
+obtaining&#160;it&#160;from&#160;the&#160;authors,&#160;so&#160;we&#160;use&#160;shared&#160;weights&#160;of<br/>
+seen&#160;in&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">3&#160;</a>that&#160;the&#160;resultant&#160;images&#160;have&#160;a&#160;similar<br/>
+models&#160;pretrained&#160;on&#160;other&#160;data.&#160;We&#160;understand&#160;that&#160;such<br/>
+panel&#160;structure,&#160;but&#160;the&#160;complex&#160;patterns&#160;cause&#160;difficulties.<br/>
+utilization&#160;of&#160;these&#160;methods&#160;introduces&#160;certain&#160;unfairness&#160;into<br/>
+The&#160;color&#160;blobs&#160;contained&#160;in&#160;the&#160;panels&#160;correspond&#160;to&#160;the<br/>
+comparison,&#160;but&#160;we&#160;believe&#160;that&#160;it&#160;is&#160;still&#160;fair&#160;enough&#160;to&#160;show<br/>
+dominant&#160;colors&#160;in&#160;the&#160;original&#160;image.&#160;We&#160;also&#160;used&#160;iterative<br/>
+the&#160;superiority&#160;of&#160;our&#160;approach.&#160;To&#160;begin&#160;with,&#160;the&#160;training<br/>
+projection&#160;methods,&#160;but&#160;they&#160;showed&#160;similar&#160;problems.<br/>
+process&#160;of&#160;these&#160;models&#160;is&#160;sophisticated&#160;and&#160;contains&#160;many<br/>
+Apparently,&#160;manga&#160;images&#160;are&#160;too&#160;complex&#160;data&#160;for&#160;existing<br/>
+obscure&#160;details,&#160;so&#160;an&#160;inaccurate&#160;reimplementation&#160;would<br/>
+methods,&#160;although&#160;the&#160;resulting&#160;models&#160;still&#160;can&#160;be&#160;useful.<br/>
+also&#160;lead&#160;to&#160;unfair&#160;comparison.&#160;Since&#160;the&#160;Manga109&#160;dataset<br/>is&#160;used&#160;for&#160;numerical&#160;and&#160;visual&#160;comparison,&#160;it&#160;provides&#160;a<br/>
+3)&#160;COLORIZATION&#160;NETWORK<br/>
+domain&#160;shift&#160;for&#160;all&#160;models&#160;(except&#160;ScreenStyle).&#160;This&#160;way,<br/>
+The&#160;model&#160;exhibits&#160;a&#160;high-quality&#160;performance&#160;of&#160;automatic<br/>
+we&#160;compare&#160;models&#160;fairer&#160;by&#160;testing&#160;on&#160;unseen&#160;images.<br/>
+coloring&#160;without&#160;color&#160;hints&#160;for&#160;images&#160;of&#160;different&#160;manga<br/>
+In&#160;fact,&#160;Style2Paints&#160;was&#160;designed&#160;for&#160;conditional&#160;generation<br/>
+styles.&#160;Also,&#160;the&#160;colorization&#160;does&#160;not&#160;depend&#160;on&#160;the&#160;aspect<br/>
+requiring&#160;color&#160;hints&#160;to&#160;generate&#160;reasonable&#160;coloring.&#160;We&#160;use<br/>
+ratio&#160;of&#160;the&#160;manga&#160;page,&#160;so&#160;double-page&#160;spreads&#160;are&#160;colorized<br/>
+it&#160;to&#160;show&#160;how&#160;our&#160;model&#160;outperforms&#160;the&#160;conditional<br/>
+with&#160;the&#160;same&#160;quality&#160;as&#160;the&#160;standard&#160;pages.<br/>
+methods&#160;if&#160;there&#160;are&#160;no&#160;color&#160;hints&#160;or&#160;an&#160;extremely&#160;small<br/>
+Coloring&#160;draft&#160;influences&#160;the&#160;image&#160;color&#160;palette&#160;but&#160;does<br/>
+number&#160;of&#160;them.&#160;Style2Paints&#160;was&#160;trained&#160;on&#160;a&#160;much&#160;larger<br/>
+not&#160;change&#160;the&#160;coloring&#160;of&#160;objects,&#160;about&#160;which&#160;the&#160;model<br/>
+dataset&#160;of&#160;anime-styled&#160;images,&#160;which&#160;also&#160;contains&#160;manga<br/>
+is&#160;strongly&#160;confident.&#160;In&#160;this&#160;way,&#160;it&#160;is&#160;possible&#160;to&#160;perform<br/>
+images,&#160;so&#160;we&#160;think&#160;that&#160;the&#160;superiority&#160;of&#160;our&#160;method&#160;in<br/>
+sampling&#160;to&#160;obtain&#160;a&#160;variety&#160;of&#160;colorings.&#160;Additionally,<br/>
+the&#160;considered&#160;condition&#160;of&#160;a&#160;small&#160;amount&#160;of&#160;user&#160;input<br/>
+we&#160;can&#160;use&#160;color&#160;images&#160;as&#160;references.&#160;By&#160;mapping&#160;this<br/>
+is&#160;shown&#160;quite&#160;fairly.&#160;Regarding&#160;ScreenStyle,&#160;we&#160;used&#160;the<br/>
+image&#160;into&#160;CLS&#160;using&#160;a&#160;model&#160;performing&#160;GAN&#160;Inversion<br/>
+weights&#160;of&#160;this&#160;model&#160;that&#160;was&#160;trained&#160;on&#160;Manga109,&#160;which<br/>
+and&#160;executing&#160;style&#160;mixing,&#160;we&#160;can&#160;get&#160;a&#160;coloring&#160;based&#160;on<br/>
+means&#160;that&#160;the&#160;dataset&#160;used&#160;for&#160;comparison&#160;is&#160;basically&#160;a<br/>
+the&#160;colors&#160;of&#160;the&#160;reference&#160;image.<br/>
+training&#160;dataset&#160;for&#160;this&#160;model.&#160;So&#160;the&#160;comparison&#160;is&#160;unfair<br/>
+Failure&#160;cases&#160;often&#160;correspond&#160;to&#160;cases&#160;where&#160;the&#160;manga<br/>
+against&#160;our&#160;model,&#160;which&#160;still&#160;outperforms&#160;ScreenStyle&#160;due<br/>
+style&#160;is&#160;quite&#160;unusual&#160;or&#160;scenes&#160;are&#160;fairly&#160;cluttered.&#160;The<br/>
+to&#160;its&#160;high&#160;generalization&#160;ability.<br/>
+colorization&#160;of&#160;an&#160;object&#160;can&#160;be&#160;inhomogeneous&#160;if&#160;it&#160;is<br/>
+We&#160;do&#160;not&#160;employ&#160;for&#160;the&#160;comparison&#160;the&#160;recently<br/>
+overlapped&#160;by&#160;some&#160;lines.&#160;A&#160;manga&#160;consists&#160;of&#160;many&#160;lines,<br/>
+proposed&#160;approaches&#160;that&#160;strongly&#160;rely&#160;on&#160;user&#160;input&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[24],</a><br/>
+where&#160;the&#160;line&#160;can&#160;be&#160;either&#160;a&#160;minor&#160;background&#160;or&#160;part&#160;of<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[26],&#160;[27]&#160;since&#160;</a>they&#160;have&#160;the&#160;same&#160;problems&#160;with&#160;automatical<br/>
+an&#160;important&#160;object,&#160;so&#160;object&#160;detection&#160;for&#160;manga&#160;is&#160;quite<br/>
+colorization&#160;as&#160;Style2Paints.&#160;Moreover,&#160;we&#160;do&#160;not&#160;perform&#160;the<br/>
+challenging.<br/>
+comparison&#160;with&#160;recent&#160;methods&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[25],&#160;[28]&#160;</a><a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">that&#160;</a>provide&#160;incre-<br/>
+A&#160;large&#160;number&#160;of&#160;manga&#160;generation&#160;and&#160;colorization<br/>
+mental&#160;improvements&#160;to&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10]&#160;because&#160;</a>those&#160;improvements&#160;is<br/>
+examples&#160;are&#160;provided&#160;in&#160;the&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#10">AppendixE.</a><br/>
+negligible&#160;regarding&#160;the&#160;domain&#160;gap&#160;that&#160;affects&#160;the&#160;models<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111587<br/>
+<hr/>
+<a name=8></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_2.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_3.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_4.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_5.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_6.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_7.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_8.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_9.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_10.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_11.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_12.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_13.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_14.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_15.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_16.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_17.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_18.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-8_19.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;4.&#160;</b>Visual&#160;comparison&#160;of&#160;the&#160;existing&#160;colorization&#160;methods.&#160;Our&#160;model&#160;generates&#160;the&#160;most&#160;plausible&#160;coloring.<br/>
+<b>FIGURE&#160;7.&#160;</b>Comparison&#160;of&#160;colorization&#160;with&#160;color&#160;hint.&#160;From&#160;left&#160;to&#160;right:<br/>
+<b>FIGURE&#160;5.&#160;</b>Colorization&#160;sampling.&#160;Three&#160;colorizations&#160;with&#160;the&#160;same<br/>
+color&#160;hint,&#160;Style2Paints,&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38],&#160;our</a>.&#160;The&#160;first&#160;colorization&#160;has&#160;regions&#160;that<br/>
+characters&#160;colorization&#160;but&#160;different&#160;background&#160;colors&#160;(green,&#160;violet,<br/>
+are&#160;not&#160;colorized&#160;if&#160;they&#160;miss&#160;color&#160;hint.&#160;The&#160;second&#160;colorization&#160;has&#160;all<br/>
+blue).<br/>
+regions&#160;colorized,&#160;but&#160;some&#160;of&#160;them&#160;have&#160;improper&#160;colors.&#160;The&#160;third<br/>colorization&#160;has&#160;all&#160;regions&#160;are&#160;properly&#160;colorized.<br/>
+<b>FIGURE&#160;6.&#160;</b>The&#160;influence&#160;of&#160;domain&#160;adaptation:&#160;without&#160;domain<br/>adaptation,&#160;+&#160;improved&#160;data&#160;generation&#160;(steps&#160;2&#160;and&#160;3),&#160;+&#160;adversarial<br/>domain&#160;adaptation,&#160;+&#160;self-training.&#160;The&#160;first&#160;image&#160;is&#160;almost<br/>black-and-white.&#160;The&#160;second&#160;image&#160;has&#160;colorized&#160;characters’&#160;faces&#160;but<br/>black-and-white&#160;background.&#160;The&#160;third&#160;image&#160;is&#160;fully&#160;colorized,&#160;but&#160;the<br/>colors&#160;are&#160;pale.&#160;The&#160;fourth&#160;image&#160;is&#160;fully&#160;colorized&#160;with&#160;vivid&#160;colors.<br/>
+<b>FIGURE&#160;8.&#160;</b>Correspondence&#160;between&#160;the&#160;coloring&#160;draft&#160;and&#160;the&#160;final<br/>
+similarly&#160;to&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#16">[10].&#160;Th</a>erefore,&#160;we&#160;believe&#160;that&#160;a&#160;comparison<br/>
+coloring.&#160;Coloring&#160;draft&#160;affects&#160;color&#160;distribution&#160;of&#160;the&#160;colorization.<br/>
+with&#160;Style2Paints,&#160;AlacGAN,&#160;and&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38]&#160;is&#160;</a>the&#160;essential&#160;one.<br/>
+The&#160;following&#160;comparison&#160;approaches&#160;are&#160;used:<br/>
+•<br/>
+<b>Visual&#160;comparison</b>.<br/>
+between&#160;two&#160;multidimensional&#160;Gaussian&#160;distributions<br/>
+•<br/>
+<b>Fréchet&#160;inception&#160;distance</b>.&#160;FID&#160;evaluates&#160;the&#160;similar-<br/>
+of&#160;intermediate&#160;activations&#160;of&#160;pretrained&#160;InceptionV3.<br/>
+ity&#160;between&#160;the&#160;distribution&#160;of&#160;generated&#160;images&#160;and&#160;the<br/>
+Parameters&#160;of&#160;these&#160;distributions&#160;are&#160;estimated&#160;with<br/>
+distribution&#160;of&#160;real&#160;images.&#160;It’s&#160;a&#160;Wasserstein&#160;distance<br/>
+testing&#160;data.&#160;We&#160;consider&#160;FID&#160;an&#160;appropriate&#160;metric<br/>
+111588<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=9></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_2.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_3.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_4.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_5.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_6.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_7.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_8.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-9_9.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>TABLE&#160;4.&#160;</b>Inference&#160;time&#160;comparison&#160;(seconds).<br/>
+As&#160;can&#160;be&#160;seen&#160;in&#160;Table&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#9">1,&#160;</a>Table&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#9">2&#160;</a>and&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#8">4,&#160;</a>our<br/>
+modified&#160;architecture&#160;and&#160;training&#160;process&#160;produce&#160;a&#160;model<br/>that&#160;is&#160;capable&#160;of&#160;generating&#160;better&#160;quality&#160;images&#160;than&#160;other<br/>existing&#160;approaches.&#160;Pix2Pix&#160;and&#160;AlacGAN&#160;are&#160;unable&#160;to<br/>generate&#160;any&#160;coloring.&#160;Style2Paints&#160;generates&#160;coloring&#160;for<br/>objects&#160;filled&#160;with&#160;screentones,&#160;but&#160;barely&#160;colors&#160;objects<br/>
+<b>FIGURE&#160;9.&#160;</b>Robustness&#160;comparison:&#160;original,&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38],&#160;only&#160;</a>colorization<br/>
+without&#160;them&#160;because&#160;it&#160;heavily&#160;relies&#160;on&#160;user&#160;input.<br/>
+network,&#160;ours.&#160;The&#160;two&#160;input&#160;images&#160;represent&#160;the&#160;same&#160;page&#160;with&#160;a<br/>minor&#160;shift.&#160;The&#160;first&#160;colorization&#160;significantly&#160;changes&#160;in&#160;terms&#160;of&#160;texture<br/>
+Screenstyle&#160;generates&#160;a&#160;certain&#160;coloring,&#160;but&#160;it&#160;is&#160;very&#160;coarse<br/>
+and&#160;color&#160;distribution.&#160;The&#160;second&#160;colorization&#160;changes&#160;in&#160;terms&#160;of&#160;color<br/>
+and&#160;has&#160;limited&#160;consistency&#160;with&#160;the&#160;image&#160;content.&#160;Model<br/>
+distribution.&#160;The&#160;third&#160;colorization&#160;differs&#160;in&#160;details&#160;but&#160;preserve&#160;texture<br/>
+from&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38]&#160;produces&#160;</a>a&#160;fairly&#160;qualitative&#160;coloring,&#160;but&#160;our&#160;model<br/>
+and&#160;color&#160;distribution.<br/>
+recognizes&#160;objects&#160;in&#160;the&#160;image&#160;better,&#160;generates&#160;more&#160;varied<br/>colorings,&#160;and&#160;creates&#160;fine&#160;details,&#160;such&#160;as&#160;glares&#160;on&#160;the&#160;skin,<br/>
+<b>TABLE&#160;1.&#160;</b>Model&#160;comparison&#160;with&#160;FID&#160;(lesser&#160;is&#160;better).<br/>
+that&#160;make&#160;the&#160;colorings&#160;more&#160;profound.<br/>
+You&#160;can&#160;also&#160;notice&#160;that&#160;a&#160;model&#160;that&#160;was&#160;trained&#160;with<br/>
+coloring&#160;drafts&#160;but&#160;doesn’t&#160;use&#160;them&#160;in&#160;the&#160;inference&#160;works<br/>better&#160;than&#160;a&#160;model&#160;that&#160;was&#160;trained&#160;without&#160;them.&#160;It&#160;shows<br/>that&#160;the&#160;use&#160;of&#160;coloring&#160;drafts&#160;simplifies&#160;training&#160;and<br/>allows&#160;the&#160;model&#160;to&#160;more&#160;effectively&#160;learn&#160;the&#160;proper&#160;color<br/>distribution.&#160;In&#160;addition,&#160;the&#160;table&#160;shows&#160;that&#160;using&#160;a&#160;model<br/>with&#160;a&#160;more&#160;qualitative&#160;StyleGAN&#160;trained&#160;with&#160;a&#160;larger&#160;CLS<br/>dimensionality&#160;does&#160;not&#160;lead&#160;to&#160;better&#160;results.&#160;This&#160;may&#160;be&#160;an<br/>indication&#160;of&#160;the&#160;fact&#160;that&#160;the&#160;enlarged&#160;CLS&#160;does&#160;not&#160;help&#160;to<br/>
+<b>TABLE&#160;2.&#160;</b>Model&#160;comparison&#160;with&#160;MOS&#160;(greater&#160;is&#160;better).<br/>
+improve&#160;the&#160;performance&#160;of&#160;existing&#160;projection&#160;methods&#160;in<br/>dealing&#160;with&#160;manga&#160;images.<br/>
+An&#160;example&#160;of&#160;multimodal&#160;colorization&#160;is&#160;presented&#160;in<br/>
+Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#8">5&#160;</a>and&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#8">8.&#160;</a>The&#160;background&#160;is&#160;more&#160;affected&#160;when&#160;the<br/>color&#160;of&#160;the&#160;faces&#160;remains&#160;the&#160;same.&#160;The&#160;Table&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#9">3&#160;</a>shows&#160;the<br/>effectiveness&#160;of&#160;the&#160;applied&#160;domain&#160;adaptation&#160;approaches.<br/>The&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#8">6&#160;</a>exhibits&#160;the&#160;case&#160;when&#160;self-training&#160;significantly<br/>
+<b>TABLE&#160;3.&#160;</b>Ablation&#160;study&#160;for&#160;domain&#160;adaptation&#160;methods&#160;with&#160;FID&#160;(lesser<br/>is&#160;better).<br/>
+improves&#160;the&#160;quality&#160;of&#160;coloring.&#160;The&#160;comparison&#160;of&#160;the<br/>coloring&#160;with&#160;the&#160;color&#160;hint&#160;is&#160;illustrated&#160;in&#160;the&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#8">7.&#160;</a>Our<br/>model&#160;is&#160;superior&#160;in&#160;colorization&#160;of&#160;regions&#160;not&#160;marked&#160;with<br/>color&#160;hints,&#160;thereby&#160;reducing&#160;the&#160;amount&#160;of&#160;user&#160;input&#160;and<br/>reducing&#160;the&#160;time&#160;for&#160;creating&#160;the&#160;desired&#160;coloring.<br/>
+In&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#9">9,&#160;</a>we&#160;exhibit&#160;that&#160;our&#160;approach&#160;is&#160;more&#160;robust<br/>
+than&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38]&#160;and&#160;</a>coloring&#160;network&#160;that&#160;preform&#160;colorization<br/>with&#160;empty&#160;color&#160;draft.&#160;We&#160;exclude&#160;other&#160;aproaches&#160;from<br/>comparison&#160;since&#160;they&#160;are&#160;not&#160;able&#160;to&#160;generate&#160;plausible<br/>
+because&#160;we&#160;noticed&#160;during&#160;our&#160;experiments&#160;that&#160;its<br/>
+colorings&#160;for&#160;manga.&#160;We&#160;use&#160;two&#160;images&#160;of&#160;the&#160;same&#160;page<br/>
+significant&#160;decrease&#160;coincides&#160;with&#160;an&#160;improvement&#160;in<br/>
+that&#160;are&#160;shifted&#160;and&#160;have&#160;different&#160;translation&#160;and&#160;pixel<br/>
+the&#160;quality&#160;of&#160;colorization&#160;concerning&#160;our&#160;perception.<br/>
+distribution&#160;since&#160;have&#160;been&#160;captured&#160;from&#160;distinct&#160;pages.&#160;Our<br/>
+•<br/>
+<b>Mean&#160;opinion&#160;score</b>.&#160;We&#160;randomly&#160;picked&#160;50&#160;colorized<br/>
+model&#160;preserves&#160;color&#160;distribution&#160;over&#160;objects&#160;better&#160;than<br/>
+images&#160;from&#160;each&#160;dataset&#160;with&#160;a&#160;random&#160;replacement&#160;of<br/>
+competitors,&#160;thus&#160;verifying&#160;the&#160;validity&#160;of&#160;our&#160;contribution.<br/>
+images&#160;with&#160;inappropriate&#160;content&#160;and&#160;asked&#160;20&#160;people<br/>
+We&#160;also&#160;compare&#160;the&#160;inference&#160;speed&#160;for&#160;models&#160;that<br/>
+to&#160;rate&#160;the&#160;colorization&#160;quality&#160;using&#160;a&#160;five-point&#160;scale,<br/>
+support&#160;color&#160;hints.&#160;The&#160;comparison&#160;for&#160;inference&#160;of&#160;512&#160;×<br/>
+where&#160;1&#160;represents&#160;‘‘Bad’’&#160;and&#160;5&#160;stands&#160;for&#160;‘‘Excellent’’.<br/>
+768&#160;images&#160;presented&#160;in&#160;Table&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#9">4.&#160;</a>It&#160;was&#160;performed&#160;on&#160;a&#160;device<br/>
+The&#160;result&#160;is&#160;the&#160;mean&#160;of&#160;these&#160;votes.&#160;Respondents&#160;were<br/>
+with&#160;Core&#160;i5-8300H&#160;CPU&#160;and&#160;GeForce&#160;GTX&#160;1060&#160;GPU.<br/>
+not&#160;informed&#160;which&#160;model&#160;was&#160;used&#160;for&#160;colorization,<br/>
+We&#160;separate&#160;preprocessing&#160;and&#160;colorization&#160;because&#160;col-<br/>
+so&#160;human’&#160;assessment&#160;was&#160;blinded.<br/>
+orization&#160;with&#160;color&#160;hints&#160;involves&#160;single&#160;preprocessing<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111589<br/>
+<hr/>
+<a name=10></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-10_1.png"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+and&#160;iterative&#160;refinement&#160;via&#160;color&#160;hint&#160;modification.&#160;Ours<br/>
+•<br/>
+Naruto<br/>
+performs&#160;colorization&#160;10x&#160;faster&#160;than&#160;Style2Paints&#160;and<br/>
+•<br/>
+One&#160;Piece<br/>
+slightly&#160;faster&#160;than&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[38].&#160;Such&#160;</a>computational&#160;complexity<br/>
+•<br/>
+Bleach<br/>
+facilitates&#160;the&#160;utilization&#160;of&#160;our&#160;approach&#160;for&#160;AR&#160;applications,<br/>
+•<br/>
+Akira<br/>
+even&#160;for&#160;mobile&#160;ones.<br/>
+•<br/>
+JoJo’s&#160;Bizarre&#160;Adventure<br/>
+•<br/>
+Demon&#160;Slayer<br/>
+<b>V.&#160;CONCLUSION</b><br/>
+•<br/>
+Tales&#160;of&#160;Demons&#160;and&#160;Gods<br/>
+In&#160;this&#160;paper,&#160;we&#160;proposed&#160;an&#160;approach&#160;for&#160;robust&#160;multimodal<br/>
+•<br/>
+Genshin&#160;impact<br/>
+manga&#160;page&#160;colorization&#160;with&#160;color&#160;hints&#160;using&#160;StyleGAN.<br/>
+•<br/>
+Another&#160;Emperor&#160;Reborn<br/>
+We&#160;collected&#160;a&#160;dataset&#160;of&#160;the&#160;manually&#160;colored&#160;manga<br/>
+To&#160;gather&#160;about&#160;55000&#160;real&#160;black-and-white&#160;images,<br/>
+pages&#160;and&#160;used&#160;it&#160;with&#160;the&#160;proposed&#160;data&#160;synthesis&#160;approach<br/>
+we&#160;used&#160;the&#160;following&#160;black-and-white&#160;manga:<br/>
+to&#160;generate&#160;a&#160;paired&#160;dataset&#160;that&#160;highly&#160;resembles&#160;real<br/>
+•<br/>
+Berserk<br/>
+black-and-white&#160;manga&#160;images&#160;and&#160;reduce&#160;the&#160;domain<br/>
+•<br/>
+Claymore<br/>
+gap.<br/>
+•<br/>
+Dr.&#160;Stone<br/>
+We&#160;determined&#160;that&#160;StyleGAN&#160;is&#160;able&#160;to&#160;learn&#160;the<br/>
+•<br/>
+Hellsing<br/>
+distribution&#160;of&#160;color&#160;manga&#160;images&#160;but&#160;its&#160;latent&#160;space&#160;is<br/>
+•<br/>
+Shape&#160;of&#160;voice<br/>
+too&#160;complex&#160;for&#160;existing&#160;projection&#160;methods.&#160;However,&#160;even<br/>
+•<br/>
+Monster<br/>
+such&#160;space&#160;admits&#160;typical&#160;manipulations&#160;that&#160;can&#160;be&#160;used<br/>
+•<br/>
+One-Punch&#160;Man<br/>
+to&#160;construct&#160;a&#160;method&#160;for&#160;the&#160;generation&#160;of&#160;color&#160;cues&#160;that<br/>
+•<br/>
+Attack&#160;on&#160;Titan<br/>
+simplify&#160;the&#160;training&#160;and&#160;the&#160;inference&#160;of&#160;the&#160;colorization<br/>
+•<br/>
+5&#160;Centimeters&#160;per&#160;Second<br/>
+task.&#160;We&#160;also&#160;showed&#160;that&#160;a&#160;model&#160;that&#160;struggles&#160;less&#160;with<br/>
+•<br/>
+The&#160;Monster&#160;Next&#160;to&#160;Me<br/>
+task&#160;multimodality&#160;generates&#160;better&#160;colorings.<br/>
+•<br/>
+All&#160;You&#160;Need&#160;Is&#160;Kill<br/>
+Our&#160;method&#160;is&#160;not&#160;very&#160;suitable&#160;for&#160;natural&#160;image<br/>
+•<br/>
+Neon&#160;Genesis&#160;Evangelion<br/>
+colorization&#160;since&#160;the&#160;variety&#160;of&#160;colors&#160;of&#160;real-world&#160;objects<br/>
+•<br/>
+Spice&#160;and&#160;Wolf<br/>
+is&#160;comparably&#160;small,&#160;e.g.&#160;a&#160;red&#160;banana&#160;seems&#160;to&#160;be&#160;unrealistic.<br/>
+•<br/>
+Goodnight&#160;Punpun<br/>
+Therefore,&#160;regularization&#160;of&#160;color&#160;variation&#160;is&#160;one&#160;of&#160;the&#160;key<br/>
+•<br/>
+Phoenix<br/>
+directions&#160;for&#160;future&#160;work.<br/>
+•<br/>
+The&#160;Ancient&#160;Magus’&#160;Bride<br/>
+Danbooru&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[51]&#160;dataset&#160;</a>is&#160;used&#160;for&#160;colored&#160;data&#160;diversi-<br/>
+<b>APPENDIX&#160;A</b><br/>
+fication.&#160;It&#160;is&#160;a&#160;crowdsourced&#160;dataset&#160;consisting&#160;of&#160;anime<br/>
+<b>APPENDIX&#160;OVERVIEW</b><br/>
+illustrations&#160;created&#160;by&#160;hobbyist&#160;artists,&#160;where&#160;all&#160;images&#160;have<br/>
+In&#160;the&#160;appendix&#160;we&#160;present:<br/>
+a&#160;set&#160;of&#160;tags&#160;that&#160;describe&#160;them.&#160;We&#160;use&#160;‘colored’,&#160;‘colorized’,<br/>
+•<br/>
+Overview&#160;of&#160;the&#160;collected&#160;data&#160;and&#160;the&#160;applied&#160;augmen-<br/>
+and&#160;‘comic’&#160;tags&#160;to&#160;select&#160;40000&#160;appropriate&#160;images.<br/>
+tations&#160;(Appendix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">B)</a><br/>
+•<br/>
+Formal&#160;definition&#160;of&#160;the&#160;training&#160;loss&#160;functions<br/>
+B.&#160;DATA&#160;AUGMENTATION<br/>
+(Appendix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">C)</a><br/>
+We&#160;use&#160;the&#160;following&#160;augmentations:<br/>
+•<br/>
+Description&#160;of&#160;the&#160;training&#160;process&#160;and&#160;hyperparameters<br/>
+•<br/>
+Horizontal&#160;flipping&#160;with&#160;<i>p&#160;</i>=&#160;0.5<br/>
+(Appendix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">D)</a><br/>
+•<br/>
+Random&#160;mirror&#160;padding&#160;with&#160;no&#160;more&#160;than&#160;15&#160;pixels,<br/>
+•<br/>
+Additional&#160;examples&#160;of&#160;manga&#160;page&#160;colorization<br/>
+followed&#160;by&#160;random&#160;cropping&#160;of&#160;size&#160;768&#160;×&#160;512.<br/>
+(Appendix&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#10">E)</a><br/>
+We&#160;have&#160;tried&#160;to&#160;train&#160;the&#160;model&#160;with&#160;512&#160;×&#160;512&#160;square<br/>images,&#160;but&#160;it&#160;resulted&#160;in&#160;degraded&#160;performance.&#160;Perhaps<br/>
+<b>APPENDIX&#160;B</b><br/>
+it&#160;is&#160;because&#160;the&#160;scenes&#160;near&#160;the&#160;image&#160;edges&#160;are<br/>
+<b>DATA&#160;PREPARATION</b><br/>
+cropped,&#160;which&#160;makes&#160;them&#160;difficult&#160;to&#160;understand&#160;and<br/>
+A.&#160;DATA&#160;COLLECTION<br/>
+colorize.&#160;Thus,&#160;we&#160;train&#160;the&#160;model&#160;with&#160;images&#160;that&#160;have<br/>
+Traditionally,&#160;manga&#160;is&#160;produced&#160;with&#160;black&#160;ink,&#160;so&#160;most<br/>
+a&#160;3:2&#160;aspect&#160;ratio.<br/>
+existing&#160;works&#160;are&#160;drawn&#160;in&#160;black-and-white.&#160;Color&#160;manga<br/>
+•<br/>
+Color&#160;jitter&#160;augmentation.&#160;In&#160;order&#160;to&#160;make&#160;our&#160;model<br/>
+often&#160;exist&#160;either&#160;as&#160;a&#160;colorized&#160;edition&#160;of&#160;a&#160;popular&#160;black-<br/>
+overfit&#160;the&#160;synthetic&#160;data&#160;less&#160;strongly,&#160;we&#160;apply&#160;this<br/>
+and-white&#160;manga&#160;provided&#160;by&#160;a&#160;major&#160;publisher&#160;or&#160;as&#160;a<br/>
+augmentation&#160;to&#160;modify&#160;the&#160;brightness,&#160;contrast,&#160;and&#160;sat-<br/>
+colorization&#160;made&#160;by&#160;admirers,&#160;although&#160;there&#160;are&#160;some<br/>
+uration&#160;of&#160;the&#160;input&#160;images.&#160;In&#160;addition,&#160;to&#160;ensure&#160;that&#160;the<br/>
+lesser-known&#160;manga&#160;that&#160;are&#160;executed&#160;in&#160;color&#160;initially.&#160;There<br/>
+model&#160;does&#160;not&#160;overfit&#160;with&#160;the&#160;color&#160;features&#160;remaining<br/>
+are&#160;also&#160;many&#160;colored&#160;Korean&#160;and&#160;Chinese&#160;comics&#160;called<br/>
+in&#160;generated&#160;images,&#160;we&#160;apply&#160;this&#160;augmentation&#160;to&#160;the<br/>
+Manhwa&#160;and&#160;Manhua.&#160;However,&#160;their&#160;drawing&#160;style&#160;and&#160;page<br/>
+color&#160;images&#160;before&#160;preprocessing.<br/>
+structure&#160;are&#160;quite&#160;different&#160;from&#160;Japanese&#160;manga,&#160;so&#160;we<br/>
+•<br/>
+For&#160;similar&#160;reasons&#160;with&#160;<i>p&#160;</i>=&#160;0.03,&#160;we&#160;feed&#160;the&#160;network<br/>
+decided&#160;to&#160;use&#160;them&#160;as&#160;little&#160;as&#160;possible.<br/>
+not&#160;with&#160;a&#160;synthetic&#160;image&#160;but&#160;with&#160;a&#160;grayscale&#160;image<br/>
+We&#160;have&#160;collected&#160;about&#160;82,000&#160;images&#160;of&#160;the&#160;following<br/>
+obtained&#160;from&#160;a&#160;color&#160;image&#160;with&#160;a&#160;weighted&#160;sum&#160;of&#160;the<br/>
+color&#160;manga:<br/>
+channels.<br/>
+111590<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=11></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-11_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-11_2.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;10.&#160;</b>Images&#160;generated&#160;with&#160;StyleGAN&#160;without&#160;truncation&#160;trick.&#160;The&#160;images&#160;are&#160;easily&#160;distinguishable&#160;from&#160;the&#160;real&#160;manga&#160;pages&#160;but&#160;have<br/>their&#160;distinctive&#160;features.&#160;That&#160;is,&#160;StyleGAN&#160;learns&#160;page&#160;structure.<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111591<br/>
+<hr/>
+<a name=12></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-12_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-12_2.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;11.&#160;</b>Style&#160;mixing&#160;of&#160;randomly&#160;sampled&#160;images.&#160;The&#160;structure&#160;of&#160;the&#160;page&#160;is&#160;preserved,&#160;but&#160;color&#160;distribution&#160;is&#160;modified&#160;in&#160;accordance&#160;with<br/>mixed&#160;image.<br/>
+<b>APPENDIX&#160;C</b><br/>
+network&#160;S,&#160;coloring&#160;network&#160;(generator)&#160;G,&#160;discriminator&#160;D,<br/>
+<b>METHOD</b><br/>
+<i>i</i>-th&#160;feature&#160;map&#160;of&#160;the&#160;pretrained&#160;VGG&#160;V<i>i</i>.<br/>
+In&#160;this&#160;section,&#160;we&#160;present&#160;mathematical&#160;formulations&#160;of<br/>
+For&#160;the&#160;drafting&#160;network,&#160;loss&#160;functions&#160;are&#160;calculated&#160;as<br/>
+loss&#160;functions&#160;used&#160;in&#160;training.&#160;To&#160;begin&#160;with,&#160;the&#160;following<br/>
+follows:<br/>
+notation&#160;is&#160;introduced:&#160;synthetic&#160;black-and-white&#160;image<br/>
+1<br/>
+L<br/>
+||S(<i>X</i><br/>
+(4)<br/>
+<i>X</i><br/>
+<i>H&#160;</i>×<i>W&#160;</i>×1<br/>
+<i>MSE&#160;</i>=<br/>
+<i>res</i>)&#160;−&#160;<i>Yres</i>||2<br/>
+<i>syn</i><br/>
+∈<br/>
+R<br/>
+,&#160;real&#160;black-and-white&#160;image&#160;<i>Xreal</i><br/>
+∈<br/>
+256&#160;×&#160;256&#160;×&#160;3<br/>
+2<br/>
+<i>H&#160;</i>×<i>W&#160;</i>×1<br/>
+R<br/>
+,&#160;resized&#160;synthetic&#160;black-and-white&#160;image&#160;<i>Xres&#160;</i>∈<br/>
+1<br/>
+256×256×1<br/>
+<i>H&#160;</i>×<i>W&#160;</i>×4<br/>
+X<br/>
+X<br/>
+R<br/>
+,&#160;color&#160;hint&#160;<i>H&#160;</i>∈&#160;R<br/>
+,&#160;and&#160;coloring&#160;draft<br/>
+L<i>LPIPS&#160;</i>=<br/>
+||<i>wl&#160;</i>⊙&#160;(&#160;˜<br/>
+V<i>l</i>(S(<i>Xres</i>))<i>hw</i><br/>
+<i>H</i><br/>
+<i>S&#160;</i>∈<br/>
+256×256×3<br/>
+<i>H&#160;</i>×<i>W&#160;</i>×3<br/>
+<i>l&#160;Wl</i><br/>
+R<br/>
+,&#160;ground&#160;truth&#160;color&#160;image&#160;<i>Y&#160;</i>∈&#160;R<br/>
+,<br/>
+<i>l</i><br/>
+<i>h</i>,<i>w</i><br/>
+resized&#160;ground&#160;truth&#160;color&#160;image&#160;<i>Y</i><br/>
+256×256×3<br/>
+<i>res&#160;</i>∈&#160;R<br/>
+,&#160;drafting<br/>
+−&#160;˜<br/>
+V<i>l</i>(<i>Yres</i>)<i>hw</i>))||2,<br/>
+(5)<br/>
+2<br/>
+111592<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=13></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-13_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-13_2.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;12.&#160;</b>Colorization&#160;of&#160;randomly&#160;picked&#160;images&#160;without&#160;color&#160;hints.<br/>
+where&#160;<i>w</i><br/>
+<i>Cl</i><br/>
+<i>l&#160;</i>∈&#160;R<br/>
+-&#160;pretrained&#160;vector&#160;for&#160;the&#160;<i>l</i>-th&#160;feature&#160;map,<br/>
+For&#160;the&#160;colorization&#160;network,&#160;loss&#160;functions&#160;are&#160;calculated<br/>
+<i>Hl&#160;</i>,&#160;<i>Wl&#160;</i>,&#160;<i>Cl&#160;</i>-&#160;spatial&#160;dimensions&#160;of&#160;the&#160;<i>l</i>-th&#160;feature&#160;map,&#160;˜<br/>
+V<i>l</i>(·)<br/>
+as&#160;follows:<br/>
+-&#160;output&#160;of&#160;V<i>l</i>(·)&#160;unit-normalized&#160;in&#160;channel&#160;dimension,&#160;and<br/>
+X<br/>
+1<br/>
+L<br/>
+=<br/>
+||V<br/>
+,&#160;(6)<br/>
+||&#160;·&#160;||<br/>
+<i>per</i><br/>
+<i>l&#160;</i>(G(<i>Xsyn</i>,&#160;<i>H&#160;</i>,&#160;<i>S&#160;</i>))&#160;−&#160;V<i>l&#160;</i>(<i>Y&#160;</i>)||2<br/>
+2<br/>
+2&#160;denotes&#160;Frobenius&#160;norm.<br/>
+<i>Cl&#160;Hl&#160;Wl</i><br/>
+<i>l</i><br/>
+VOLUME&#160;11,&#160;2023<br/>
+111593<br/>
+<hr/>
+<a name=14></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-14_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-14_2.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;13.&#160;</b>Colorization&#160;of&#160;the&#160;double-page&#160;spreads.&#160;The&#160;double-page&#160;spread&#160;colorization&#160;has&#160;the&#160;same&#160;quality&#160;as&#160;for<br/>single-page&#160;images.<br/>
+1<br/>
+L<br/>
+L<i>synthetic&#160;</i>=&#160;−&#160;log&#160;D(<i>Y&#160;</i>)−log&#160;(1−D(G(<i>X</i><br/>
+<i>MAE&#160;</i>=<br/>
+||G(<i>Xsyn</i>,&#160;<i>H&#160;</i>,&#160;<i>S</i>)&#160;−&#160;<i>Yres</i>||1<br/>
+(7)<br/>
+<i>D</i><br/>
+<i>syn</i>,&#160;<i>H&#160;</i>,&#160;<i>S&#160;</i>))),<br/>
+(10)<br/>
+3<i>HW</i><br/>
+<i>adv</i><br/>
+L<i>real&#160;</i>=&#160;−&#160;log&#160;D(<i>Y&#160;</i>)&#160;−&#160;log&#160;(1&#160;−&#160;D(G(<i>X</i><br/>
+<i>D</i><br/>
+<i>real&#160;</i>,&#160;ˆ<br/>
+<i>H&#160;</i>,&#160;<i>S</i>))),<br/>
+L<i>synthetic</i><br/>
+<i>adv</i><br/>
+=&#160;log&#160;(1&#160;−&#160;D(G(<i>X</i><br/>
+<i>G</i><br/>
+<i>syn</i>,&#160;<i>H&#160;</i>,&#160;<i>S&#160;</i>))),<br/>
+(8)<br/>
+<i>adv</i><br/>
+(11)<br/>
+L<i>real&#160;</i>=&#160;log&#160;(1&#160;−&#160;D(G(<i>X</i><br/>
+<i>G</i><br/>
+<i>real&#160;</i>,&#160;ˆ<br/>
+<i>H&#160;</i>,&#160;<i>S</i>))),<br/>
+(9)<br/>
+<i>adv</i><br/>
+where&#160;ˆ<br/>
+<i>H&#160;</i>-&#160;empty&#160;color&#160;hint.<br/>
+111594<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=15></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-15_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-15_2.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>FIGURE&#160;14.&#160;</b>Colorization&#160;with&#160;color&#160;hints.&#160;The&#160;double-page&#160;spread&#160;colorization&#160;has&#160;the&#160;same&#160;quality&#160;as&#160;for&#160;single-page&#160;images.<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111595<br/>
+<hr/>
+<a name=16></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-16_1.png"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<b>APPENDIX&#160;D</b><br/>
+<b>REFERENCES</b><br/>
+<b>TRAINING&#160;PROCESS</b><br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#1">[1]&#160;Z.&#160;</a>Cheng,&#160;Q.&#160;Yang,&#160;and&#160;B.&#160;Sheng,&#160;‘‘Deep&#160;colorization,’’&#160;in&#160;<i>Proc.&#160;IEEE&#160;Int.</i><br/>
+We&#160;initialize&#160;the&#160;weights&#160;with&#160;Xavier&#160;initialization&#160;and<br/>
+<i>Conf.&#160;Comput.&#160;Vis.&#160;(ICCV)</i>,&#160;Dec.&#160;2015,&#160;pp.&#160;415–423.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#1">[2]&#160;S.&#160;</a>Iizuka,&#160;E.&#160;Simo-Serra,&#160;and&#160;H.&#160;Ishikawa,&#160;‘‘Let&#160;there&#160;be&#160;color!&#160;Joint<br/>
+perform&#160;optimization&#160;with&#160;Adam&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#17">[57]&#160;for&#160;</a>all&#160;models.<br/>
+end-to-end&#160;learning&#160;of&#160;global&#160;and&#160;local&#160;image&#160;priors&#160;for&#160;automatic<br/>
+<b>StyleGAN2</b>.&#160;We&#160;set&#160;the&#160;batch&#160;size&#160;to&#160;32&#160;and&#160;the&#160;learning<br/>
+image&#160;colorization&#160;with&#160;simultaneous&#160;classification,’’&#160;<i>ACM&#160;Trans.&#160;Graph.</i>,<br/>
+rate&#160;to&#160;10−3.&#160;The&#160;models&#160;are&#160;trained&#160;for&#160;700,000&#160;iterations<br/>
+vol.&#160;35,&#160;no.&#160;4,&#160;pp.&#160;1–11,&#160;Jul.&#160;2016.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#1">[3]&#160;R.&#160;</a>Zhang,&#160;P.&#160;Isola,&#160;and&#160;A.&#160;A.&#160;Efros,&#160;‘‘Colorful&#160;image&#160;colorization,’’&#160;in<br/>
+with&#160;a&#160;gradual&#160;learning&#160;rate&#160;decrease.<br/>
+<i>Computer&#160;Vision—ECCV</i>.&#160;Amsterdam,&#160;The&#160;Netherlands:&#160;Springer,&#160;2016,<br/>
+<b>Drafting&#160;network</b>.&#160;We&#160;set&#160;parameters&#160;λ<i>L</i>2,&#160;λ<i>LPIPS&#160;</i>to&#160;be<br/>
+pp.&#160;649–666.<br/>
+equal&#160;1&#160;and&#160;0.5&#160;respectively.&#160;The&#160;models&#160;are&#160;trained&#160;for<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#1">[4]&#160;R.&#160;</a>Zhang,&#160;J.-Y.&#160;Zhu,&#160;P.&#160;Isola,&#160;X.&#160;Geng,&#160;A.&#160;S.&#160;Lin,&#160;T.&#160;Yu,&#160;and&#160;A.&#160;A.&#160;Efros,<br/>
+12&#160;epochs&#160;using&#160;synthetic&#160;data&#160;with&#160;the&#160;learning&#160;rate&#160;of&#160;10−4<br/>
+‘‘Real-time&#160;user-guided&#160;image&#160;colorization&#160;with&#160;learned&#160;deep&#160;priors,’’<br/>2017,&#160;<i>arXiv:1705.02999</i>.<br/>
+and&#160;the&#160;batch&#160;size&#160;of&#160;8.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#1">[5]&#160;E.&#160;</a>Kim,&#160;S.&#160;Lee,&#160;J.&#160;Park,&#160;S.&#160;Choi,&#160;C.&#160;Seo,&#160;and&#160;J.&#160;Choo,&#160;‘‘Deep&#160;edge-aware<br/>
+<b>Colorization&#160;network</b>.&#160;In&#160;the&#160;first&#160;step,&#160;we&#160;train&#160;this&#160;model<br/>
+interactive&#160;colorization&#160;against&#160;color-bleeding&#160;effects,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF</i><br/>
+for&#160;15&#160;epochs&#160;with&#160;a&#160;batch&#160;size&#160;of&#160;4&#160;and&#160;a&#160;learning&#160;rate&#160;of<br/>
+<i>Int.&#160;Conf.&#160;Comput.&#160;Vis.&#160;(ICCV)</i>,&#160;Oct.&#160;2021,&#160;pp.&#160;14647–14656.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[6]&#160;M.&#160;</a>Golyadkin,&#160;V.&#160;Pozdnyakov,&#160;L.&#160;Zhukov,&#160;and&#160;I.&#160;Makarov,&#160;‘‘SensorSCAN:<br/>
+10−4&#160;and&#160;4&#160;×&#160;10−4&#160;for&#160;the&#160;generator&#160;and&#160;discriminator.&#160;In&#160;the<br/>
+Self-supervised&#160;learning&#160;and&#160;deep&#160;clustering&#160;for&#160;fault&#160;diagnosis&#160;in&#160;chemical<br/>
+second&#160;step,&#160;batch&#160;size&#160;is&#160;8&#160;with&#160;the&#160;same&#160;learning&#160;rate.&#160;The<br/>
+processes,’’&#160;<i>Artif.&#160;Intell.</i>,&#160;vol.&#160;324,&#160;Nov.&#160;2023,&#160;Art.&#160;no.&#160;104012.<br/>
+loss&#160;weights&#160;are&#160;λ<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[7]&#160;X.&#160;</a>Li,&#160;I.&#160;Makarov,&#160;and&#160;D.&#160;Kiselev,&#160;‘‘Predicting&#160;molecule&#160;toxicity&#160;via<br/>
+<i>L</i>1&#160;=&#160;10,&#160;λ<i>per&#160;</i>=&#160;1,&#160;λ<i>synthetic&#160;</i>=&#160;1.5,&#160;λ<i>G</i><br/>
+=<br/>
+<i>real</i><br/>
+descriptor-based&#160;graph&#160;self-supervised&#160;learning,’’&#160;<i>IEEE&#160;Access</i>,&#160;vol.&#160;11,<br/>
+0.4,&#160;λ<i>D</i><br/>
+=&#160;0.7&#160;for&#160;the&#160;first&#160;step&#160;and&#160;λ<br/>
+<i>real</i><br/>
+<i>L</i>1&#160;=&#160;10,&#160;λ<i>per&#160;</i>=&#160;1,<br/>
+pp.&#160;91842–91849,&#160;2023.<br/>
+λ<i>synthetic&#160;</i>=&#160;1.2&#160;for&#160;the&#160;second.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[8]&#160;L.&#160;</a>Zhang,&#160;C.&#160;Li,&#160;T.-T.&#160;Wong,&#160;Y.&#160;Ji,&#160;and&#160;C.&#160;Liu,&#160;‘‘Two-stage&#160;sketch<br/>
+We&#160;use&#160;the&#160;following&#160;color&#160;cues&#160;generation&#160;schedule&#160;to<br/>
+colorization,’’&#160;<i>ACM&#160;Trans.&#160;Graph.</i>,&#160;vol.&#160;37,&#160;no.&#160;6,&#160;pp.&#160;1–14,&#160;Dec.&#160;2018.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[9]&#160;L.&#160;</a>Zhang,&#160;Y.&#160;Ji,&#160;X.&#160;Lin,&#160;and&#160;C.&#160;Liu,&#160;‘‘Style&#160;transfer&#160;for&#160;anime&#160;sketches&#160;with<br/>
+maintain&#160;a&#160;training&#160;balance&#160;between&#160;the&#160;generator&#160;and&#160;the<br/>
+enhanced&#160;residual&#160;U-net&#160;and&#160;auxiliary&#160;classifier&#160;GAN,’’&#160;in&#160;<i>Proc.&#160;4th&#160;IAPR</i><br/>
+discriminator:<br/>
+<i>Asian&#160;Conf.&#160;Pattern&#160;Recognit.&#160;(ACPR)</i>,&#160;Nov.&#160;2017,&#160;pp.&#160;506–511.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[10]&#160;</a>Y.&#160;Ci,&#160;X.&#160;Ma,&#160;Z.&#160;Wang,&#160;H.&#160;Li,&#160;and&#160;Z.&#160;Luo,&#160;‘‘User-guided&#160;deep&#160;anime&#160;line<br/>
+1)&#160;At&#160;the&#160;first&#160;epoch,&#160;we&#160;generate&#160;color&#160;hints&#160;with&#160;the<br/>
+art&#160;colorization&#160;with&#160;conditional&#160;adversarial&#160;networks,’’&#160;in&#160;<i>Proc.&#160;26th&#160;ACM</i><br/>
+probability&#160;of&#160;0.3,&#160;the&#160;model&#160;gets&#160;an&#160;empty&#160;color&#160;hint<br/>
+<i>Int.&#160;Conf.&#160;Multimedia</i>,&#160;2018,&#160;pp.&#160;1536–1544.<br/>
+otherwise;&#160;coloring&#160;draft&#160;is&#160;empty.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[11]&#160;</a>C.&#160;Furusawa,&#160;K.&#160;Hiroshiba,&#160;K.&#160;Ogaki,&#160;and&#160;Y.&#160;Odagiri,&#160;‘‘Comicolorization:<br/>
+Semi-automatic&#160;Manga&#160;colorization,’’&#160;in&#160;<i>Proc.&#160;SIGGRAPH&#160;Asia&#160;Tech.</i><br/>
+2)&#160;At&#160;the&#160;second&#160;epoch,&#160;the&#160;probability&#160;of&#160;color&#160;hints<br/>
+<i>Briefs</i>,&#160;2017,&#160;pp.&#160;1–4.<br/>
+generation&#160;is&#160;0.6,&#160;coloring&#160;draft&#160;is&#160;empty.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[12]&#160;</a>T.&#160;Karras,&#160;S.&#160;Laine,&#160;and&#160;T.&#160;Aila,&#160;‘‘A&#160;style-based&#160;generator&#160;architecture&#160;for<br/>
+3)&#160;On&#160;the&#160;third,&#160;the&#160;probability&#160;of&#160;color&#160;hints&#160;generation&#160;is<br/>
+generative&#160;adversarial&#160;networks,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.<br/>Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jun.&#160;2019,&#160;pp.&#160;4396–4405.<br/>
+0.3,&#160;and&#160;the&#160;probability&#160;of&#160;coloring&#160;draft&#160;generation&#160;is<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[13]&#160;</a>T.&#160;Karras,&#160;S.&#160;Laine,&#160;M.&#160;Aittala,&#160;J.&#160;Hellsten,&#160;J.&#160;Lehtinen,&#160;and&#160;T.&#160;Aila,<br/>
+0.4.<br/>
+‘‘Analyzing&#160;and&#160;improving&#160;the&#160;image&#160;quality&#160;of&#160;StyleGAN,’’&#160;in&#160;<i>Proc.</i><br/>
+4)&#160;On&#160;the&#160;fourth&#160;epoch&#160;and&#160;beyond,&#160;the&#160;probability&#160;of<br/>
+<i>IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jun.&#160;2020,<br/>pp.&#160;8107–8116.<br/>
+color&#160;hints&#160;generation&#160;is&#160;0.5,&#160;coloring&#160;draft&#160;-&#160;0.8.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[14]&#160;</a>S.&#160;Guadarrama,&#160;R.&#160;Dahl,&#160;D.&#160;Bieber,&#160;M.&#160;Norouzi,&#160;J.&#160;Shlens,&#160;and&#160;K.&#160;Murphy,<br/>
+We&#160;use&#160;this&#160;scheme&#160;because&#160;if&#160;the&#160;generator&#160;receives&#160;color<br/>
+‘‘PixColor:&#160;Pixel&#160;recursive&#160;colorization,’’&#160;2017,&#160;<i>arXiv:1705.07208</i>.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[15]&#160;</a>M.&#160;Kumar,&#160;D.&#160;Weissenborn,&#160;and&#160;N.&#160;Kalchbrenner,&#160;‘‘Colorization&#160;trans-<br/>
+cues&#160;too&#160;often,&#160;it&#160;is&#160;easy&#160;to&#160;generate&#160;realistic&#160;images.&#160;There-<br/>
+former,’’&#160;2021,&#160;<i>arXiv:2102.04432</i>.<br/>
+fore,&#160;if&#160;we&#160;do&#160;not&#160;reduce&#160;their&#160;proportion,&#160;the&#160;discriminator<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[16]&#160;</a>A.&#160;Van&#160;Den&#160;Oord,&#160;N.&#160;Kalchbrenner,&#160;and&#160;K.&#160;Kavukcuoglu,&#160;‘‘Pixel&#160;recurrent<br/>
+will&#160;certainly&#160;lose&#160;to&#160;the&#160;generator&#160;and&#160;will&#160;not&#160;be&#160;able&#160;to&#160;learn<br/>
+neural&#160;networks,’’&#160;in&#160;<i>Proc.&#160;Int.&#160;Conf.&#160;Mach.&#160;Learn.</i>,&#160;2016,&#160;pp.&#160;1747–1756.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[17]&#160;</a>J.&#160;Ho,&#160;N.&#160;Kalchbrenner,&#160;D.&#160;Weissenborn,&#160;and&#160;T.&#160;Salimans,&#160;‘‘Axial&#160;attention<br/>
+useful&#160;features&#160;that&#160;will&#160;improve&#160;the&#160;generator&#160;performance.<br/>
+in&#160;multidimensional&#160;transformers,’’&#160;2019,&#160;<i>arXiv:1912.12180</i>.<br/>
+In&#160;the&#160;first&#160;step,&#160;we&#160;fine-tune&#160;the&#160;model&#160;with&#160;a&#160;paired<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[18]&#160;</a>P.&#160;Isola,&#160;J.-Y.&#160;Zhu,&#160;T.&#160;Zhou,&#160;and&#160;A.&#160;A.&#160;Efros,&#160;‘‘Image-to-image&#160;translation<br/>
+dataset&#160;of&#160;real&#160;data&#160;after&#160;training.&#160;We&#160;perform&#160;training&#160;for&#160;no<br/>
+with&#160;conditional&#160;adversarial&#160;networks,’’&#160;in&#160;<i>Proc.&#160;IEEE&#160;Conf.&#160;Comput.&#160;Vis.<br/>Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jul.&#160;2017,&#160;pp.&#160;5967–5976.<br/>
+more&#160;than&#160;two&#160;epochs,&#160;as&#160;the&#160;model&#160;is&#160;overfitting&#160;for&#160;a&#160;certain<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[19]&#160;</a>Y.&#160;Xiao,&#160;P.&#160;Zhou,&#160;Y.&#160;Zheng,&#160;and&#160;C.-S.&#160;Leung,&#160;‘‘Interactive&#160;deep&#160;colorization<br/>
+style&#160;of&#160;black-and-white&#160;manga.&#160;Such&#160;fine-tuning&#160;diversifies<br/>
+using&#160;simultaneous&#160;global&#160;and&#160;local&#160;inputs,’’&#160;in&#160;<i>Proc.&#160;IEEE&#160;Int.&#160;Conf.</i><br/>
+the&#160;model’s&#160;colorings&#160;since&#160;the&#160;model&#160;is&#160;trained&#160;in&#160;supervised<br/>
+<i>Acoust.,&#160;Speech&#160;Signal&#160;Process.&#160;(ICASSP)</i>,&#160;May&#160;2019,&#160;pp.&#160;1887–1891.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[20]&#160;</a>M.&#160;He,&#160;D.&#160;Chen,&#160;J.&#160;Liao,&#160;P.&#160;V.&#160;Sander,&#160;and&#160;L.&#160;Yuan,&#160;‘‘Deep&#160;exemplar-based<br/>
+mode&#160;with&#160;pixel&#160;structures&#160;that&#160;are&#160;not&#160;present&#160;in&#160;data.&#160;It&#160;does<br/>
+colorization,’’&#160;<i>ACM&#160;Trans.&#160;Graph.</i>,&#160;vol.&#160;37,&#160;no.&#160;4,&#160;pp.&#160;1–16,&#160;Aug.&#160;2018.<br/>
+not&#160;happen&#160;during&#160;training&#160;because&#160;the&#160;model&#160;is&#160;only&#160;trained<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[21]&#160;</a>P.&#160;Lu,&#160;J.&#160;Yu,&#160;X.&#160;Peng,&#160;Z.&#160;Zhao,&#160;and&#160;X.&#160;Wang,&#160;‘‘Gray2ColorNet:&#160;Transfer<br/>
+with&#160;real&#160;images&#160;using&#160;adversarial&#160;loss.<br/>
+more&#160;colors&#160;from&#160;reference&#160;image,’’&#160;in&#160;<i>Proc.&#160;28th&#160;ACM&#160;Int.&#160;Conf.<br/>Multimedia</i>,&#160;Oct.&#160;2020,&#160;pp.&#160;3210–3218.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[22]&#160;</a>Y.&#160;Hati,&#160;G.&#160;Jouet,&#160;F.&#160;Rousseaux,&#160;and&#160;C.&#160;Duhart,&#160;‘‘PaintsTorch:&#160;A&#160;user-<br/>
+<b>APPENDIX&#160;E</b><br/>
+guided&#160;anime&#160;line&#160;art&#160;colorization&#160;tool&#160;with&#160;double&#160;generator&#160;conditional<br/>
+<b>RESULTS</b><br/>
+adversarial&#160;network,’’&#160;in&#160;<i>Proc.&#160;Eur.&#160;Conf.&#160;Vis.&#160;Media&#160;Prod.</i>,&#160;Dec.&#160;2019,<br/>pp.&#160;1–10.<br/>
+Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#11">10&#160;</a>and&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#12">11&#160;</a>give&#160;examples&#160;of&#160;manga&#160;page&#160;images&#160;gen-<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[23]&#160;</a>F.&#160;C.&#160;Silva,&#160;P.&#160;André&#160;Lima&#160;de&#160;Castro,&#160;H.&#160;R.&#160;Júnior,&#160;and&#160;E.&#160;C.&#160;Marujo,<br/>
+erated&#160;with&#160;StyleGAN.&#160;To&#160;exhibit&#160;the&#160;results&#160;of&#160;colorization<br/>
+‘‘Mangan:&#160;Assisting&#160;colorization&#160;of&#160;Manga&#160;characters&#160;concept&#160;art&#160;using<br/>
+without&#160;color&#160;hints,&#160;we&#160;randomly&#160;selected&#160;a&#160;set&#160;of&#160;images&#160;with<br/>
+conditional&#160;GAN,’’&#160;in&#160;<i>Proc.&#160;IEEE&#160;Int.&#160;Conf.&#160;Image&#160;Process.&#160;(ICIP)</i>,<br/>Sep.&#160;2019,&#160;pp.&#160;3257–3261.<br/>
+random&#160;replacement&#160;if&#160;the&#160;image&#160;content&#160;is&#160;not&#160;appropriate<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[24]&#160;</a>L.&#160;Zhang,&#160;C.&#160;Li,&#160;E.&#160;Simo-Serra,&#160;Y.&#160;Ji,&#160;T.-T.&#160;Wong,&#160;and&#160;C.&#160;Liu,&#160;‘‘User-guided<br/>
+(e.g.,&#160;nudity).&#160;The&#160;results&#160;are&#160;presented&#160;in&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#13">12.&#160;</a>We&#160;also<br/>
+line&#160;art&#160;flat&#160;filling&#160;with&#160;split&#160;filling&#160;mechanism,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Conf.</i><br/>
+demonstrate&#160;in&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#14">13&#160;</a>that&#160;the&#160;capability&#160;of&#160;our&#160;model&#160;to<br/>
+<i>Comput.&#160;Vis.&#160;Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jun.&#160;2021,&#160;pp.&#160;9884–9893.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[25]&#160;</a>M.&#160;Yuan&#160;and&#160;E.&#160;Simo-Serra,&#160;‘‘Line&#160;art&#160;colorization&#160;with&#160;concatenated<br/>
+colorize&#160;double-page&#160;images.&#160;Colorization&#160;with&#160;color&#160;hints<br/>
+spatial&#160;attention,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.</i><br/>
+is&#160;illustrated&#160;in&#160;Fig.&#160;<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#15">14.</a><br/>
+<i>Workshops&#160;(CVPRW)</i>,&#160;Jun.&#160;2021,&#160;pp.&#160;3941–3945.<br/>
+111596<br/>
+VOLUME&#160;11,&#160;2023<br/>
+<hr/>
+<a name=17></a><img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-17_1.png"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-17_2.jpg"/><br/>
+<img src="Robust_Manga_Page_Colorization_via_Coloring_Latent_Space-17_3.jpg"/><br/>
+M.&#160;Golyadkin,&#160;I.&#160;Makarov:&#160;Robust&#160;Manga&#160;Page&#160;Colorization&#160;via&#160;Coloring&#160;Latent&#160;Space<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[26]&#160;</a>Y.&#160;Shimizu,&#160;R.&#160;Furuta,&#160;D.&#160;Ouyang,&#160;Y.&#160;Taniguchi,&#160;R.&#160;Hinami,&#160;and<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">[49]&#160;</a>J.&#160;Johnson,&#160;A.&#160;Alahi,&#160;and&#160;L.&#160;Fei-Fei,&#160;‘‘Perceptual&#160;losses&#160;for&#160;real-time&#160;style<br/>
+S.&#160;Ishiwatari,&#160;‘‘Painting&#160;style-aware&#160;Manga&#160;colorization&#160;based&#160;on&#160;genera-<br/>
+transfer&#160;and&#160;super-resolution,’’&#160;in&#160;<i>Computer&#160;Vision—ECCV</i>.&#160;Amsterdam,<br/>
+tive&#160;adversarial&#160;networks,’’&#160;in&#160;<i>Proc.&#160;IEEE&#160;Int.&#160;Conf.&#160;Image&#160;Process.&#160;(ICIP)</i>,<br/>
+The&#160;Netherlands:&#160;Springer,&#160;2016,&#160;pp.&#160;694–711.<br/>
+Sep.&#160;2021,&#160;pp.&#160;1739–1743.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">[50]&#160;</a>I.&#160;Goodfellow,&#160;J.&#160;Pouget-Abadie,&#160;M.&#160;Mirza,&#160;B.&#160;Xu,&#160;D.&#160;Warde-Farley,<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[27]&#160;</a>J.&#160;Zhang,&#160;S.&#160;Zhu,&#160;K.&#160;Liu,&#160;and&#160;X.&#160;Liu,&#160;‘‘UGSC-GAN:&#160;User-guided&#160;sketch<br/>
+S.&#160;Ozair,&#160;A.&#160;Courville,&#160;and&#160;Y.&#160;Bengio,&#160;‘‘Generative&#160;adversarial&#160;nets,’’&#160;in<br/>
+colorization&#160;with&#160;deep&#160;convolution&#160;generative&#160;adversarial&#160;networks,’’<br/>
+<i>Proc.&#160;Adv.&#160;Neural&#160;Inf.&#160;Process.&#160;Syst.</i>,&#160;vol.&#160;27,&#160;2014,&#160;pp.&#160;1–9.<br/>
+<i>Comput.&#160;Animation&#160;Virtual&#160;Worlds</i>,&#160;vol.&#160;33,&#160;no.&#160;1,&#160;p.&#160;e2032,&#160;Jan.&#160;2022.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">[51]&#160;</a>A.&#160;Community&#160;and&#160;G.&#160;Branwen.&#160;(2021).&#160;<i>Danbooru2020:&#160;A&#160;Large-Scale</i><br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#2">[28]&#160;</a>Z.&#160;Dou,&#160;N.&#160;Wang,&#160;B.&#160;Li,&#160;Z.&#160;Wang,&#160;H.&#160;Li,&#160;and&#160;B.&#160;Liu,&#160;‘‘Dual&#160;color<br/>
+<i>Crowdourced&#160;and&#160;Tagged&#160;Anime&#160;Illustration&#160;Dataset</i>.&#160;[Online].&#160;Available:<br/>
+space&#160;guided&#160;sketch&#160;colorization,’’&#160;<i>IEEE&#160;Trans.&#160;Image&#160;Process.</i>,&#160;vol.&#160;30,<br/>
+https://www.gwern.net/Danbooru2020<br/>
+pp.&#160;7292–7304,&#160;2021.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">[52]&#160;</a>Y.&#160;Matsui,&#160;K.&#160;Ito,&#160;Y.&#160;Aramaki,&#160;A.&#160;Fujimoto,&#160;T.&#160;Ogawa,&#160;T.&#160;Yamasaki,<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[29]&#160;</a>J.&#160;Lee,&#160;E.&#160;Kim,&#160;Y.&#160;Lee,&#160;D.&#160;Kim,&#160;J.&#160;Chang,&#160;and&#160;J.&#160;Choo,&#160;‘‘Reference-<br/>
+and&#160;K.&#160;Aizawa,&#160;‘‘Sketch-based&#160;Manga&#160;retrieval&#160;using&#160;Manga109&#160;dataset,’’<br/>
+based&#160;sketch&#160;image&#160;colorization&#160;using&#160;augmented-self&#160;reference&#160;and&#160;dense<br/>
+<i>Multimedia&#160;Tools&#160;Appl.</i>,&#160;vol.&#160;76,&#160;no.&#160;20,&#160;pp.&#160;21811–21838,&#160;Oct.&#160;2017.<br/>
+semantic&#160;correspondence,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern</i><br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">[53]&#160;</a>K.&#160;Aizawa,&#160;A.&#160;Fujimoto,&#160;A.&#160;Otsubo,&#160;T.&#160;Ogawa,&#160;Y.&#160;Matsui,&#160;K.&#160;Tsubota,<br/>
+<i>Recognit.&#160;(CVPR)</i>,&#160;Jun.&#160;2020,&#160;pp.&#160;5800–5809.<br/>
+and&#160;H.&#160;Ikuta,&#160;‘‘Building&#160;a&#160;Manga&#160;dataset&#160;‘Manga109’&#160;with&#160;annotations&#160;for<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[30]&#160;</a>Q.&#160;Zhang,&#160;B.&#160;Wang,&#160;W.&#160;Wen,&#160;H.&#160;Li,&#160;and&#160;J.&#160;Liu,&#160;‘‘Line&#160;art&#160;correlation<br/>
+multimedia&#160;applications,’’&#160;<i>IEEE&#160;MultimediaMag.</i>,&#160;vol.&#160;27,&#160;no.&#160;2,&#160;pp.&#160;8–18,<br/>
+matching&#160;feature&#160;transfer&#160;network&#160;for&#160;automatic&#160;animation&#160;colorization,’’<br/>
+Apr./Jun.&#160;2020.<br/>
+in&#160;<i>Proc.&#160;IEEE&#160;Winter&#160;Conf.&#160;Appl.&#160;Comput.&#160;Vis.&#160;(WACV)</i>,&#160;Jan.&#160;2021,<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">[54]&#160;</a>H.&#160;Winnemöller,&#160;J.&#160;E.&#160;Kyprianidis,&#160;and&#160;S.&#160;C.&#160;Olsen,&#160;‘‘XDoG:&#160;An<br/>
+pp.&#160;3871–3880.<br/>
+extended&#160;difference-of-Gaussians&#160;compendium&#160;including&#160;advanced&#160;image<br/>stylization,’’&#160;<i>Comput.&#160;Graph.</i>,&#160;vol.&#160;36,&#160;no.&#160;6,&#160;pp.&#160;740–753,&#160;Oct.&#160;2012.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[31]&#160;</a>H.&#160;Kim,&#160;H.&#160;Y.&#160;Jhoo,&#160;E.&#160;Park,&#160;and&#160;S.&#160;Yoo,&#160;‘‘Tag2Pix:&#160;Line&#160;art&#160;colorization<br/>
+using&#160;text&#160;tag&#160;with&#160;SECat&#160;and&#160;changing&#160;loss,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Int.&#160;Conf.</i><br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">[55]&#160;</a>T.&#160;Park,&#160;A.&#160;A.&#160;Efros,&#160;R.&#160;Zhang,&#160;and&#160;J.-Y.&#160;Zhu,&#160;‘‘Contrastive&#160;learning<br/>
+<i>Comput.&#160;Vis.&#160;(ICCV)</i>,&#160;Oct.&#160;2019,&#160;pp.&#160;9055–9064.<br/>
+for&#160;unpaired&#160;image-to-image&#160;translation,’’&#160;in&#160;<i>Computer&#160;Vision—ECCV</i>.<br/>Glasgow,&#160;U.K.:&#160;Springer,&#160;2020,&#160;pp.&#160;319–345.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[32]&#160;</a>C.&#160;Zou,&#160;H.&#160;Mo,&#160;C.&#160;Gao,&#160;R.&#160;Du,&#160;and&#160;H.&#160;Fu,&#160;‘‘Language-based&#160;colorization&#160;of<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">[56]&#160;</a>A.&#160;Paszke,&#160;S.&#160;Gross,&#160;F.&#160;Massa,&#160;A.&#160;Lerer,&#160;J.&#160;Bradbury,&#160;G.&#160;Chanan,&#160;T.&#160;Killeen,<br/>
+scene&#160;sketches,’’&#160;<i>ACM&#160;Trans.&#160;Graph.</i>,&#160;vol.&#160;38,&#160;no.&#160;6,&#160;pp.&#160;1–16,&#160;Dec.&#160;2019.<br/>
+Z.&#160;Lin,&#160;N.&#160;Gimelshein,&#160;and&#160;L.&#160;Antiga,&#160;‘‘PyTorch:&#160;An&#160;imperative&#160;style,<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[33]&#160;</a>R.&#160;Cao,&#160;H.&#160;Mo,&#160;and&#160;C.&#160;Gao,&#160;‘‘Line&#160;art&#160;colorization&#160;based&#160;on&#160;explicit&#160;region<br/>
+high-performance&#160;deep&#160;learning&#160;library,’’&#160;in&#160;<i>Proc.&#160;Adv.&#160;Neural&#160;Inf.&#160;Process.</i><br/>
+segmentation,’’&#160;<i>Comput.&#160;Graph.&#160;Forum</i>,&#160;vol.&#160;40,&#160;no.&#160;7,&#160;2021,&#160;pp.&#160;1–10.<br/>
+<i>Syst.</i>,&#160;vol.&#160;32,&#160;2019,&#160;pp.&#160;1–12.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[34]&#160;</a>K.&#160;Frans,&#160;‘‘Outline&#160;colorization&#160;through&#160;tandem&#160;adversarial&#160;networks,’’<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">[57]&#160;</a>D.&#160;P.&#160;Kingma&#160;and&#160;J.&#160;Ba,&#160;‘‘Adam:&#160;A&#160;method&#160;for&#160;stochastic&#160;optimization,’’<br/>
+2017,&#160;<i>arXiv:1704.08834</i>.<br/>
+2014,&#160;<i>arXiv:1412.6980</i>.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[35]&#160;</a>S.&#160;Yoo,&#160;H.&#160;Bahng,&#160;S.&#160;Chung,&#160;J.&#160;Lee,&#160;J.&#160;Chang,&#160;and&#160;J.&#160;Choo,&#160;‘‘Coloring&#160;with<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">[58]&#160;</a>A.&#160;Buslaev,&#160;V.&#160;I.&#160;Iglovikov,&#160;E.&#160;Khvedchenya,&#160;A.&#160;Parinov,&#160;M.&#160;Druzhinin,&#160;and<br/>
+limited&#160;data:&#160;Few-shot&#160;colorization&#160;via&#160;memory&#160;augmented&#160;networks,’’&#160;in<br/>
+A.&#160;A.&#160;Kalinin,&#160;‘‘Albumentations:&#160;Fast&#160;and&#160;flexible&#160;image&#160;augmentations,’’<br/>
+<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jun.&#160;2019,<br/>
+<i>Information</i>,&#160;vol.&#160;11,&#160;no.&#160;2,&#160;p.&#160;125,&#160;Feb.&#160;2020.<br/>
+pp.&#160;11275–11284.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#6">[59]&#160;</a>H.&#160;Zhang,&#160;I.&#160;Goodfellow,&#160;D.&#160;Metaxas,&#160;and&#160;A.&#160;Odena,&#160;‘‘Self-attention<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[36]&#160;</a>M.&#160;Xie,&#160;C.&#160;Li,&#160;X.&#160;Liu,&#160;and&#160;T.-T.&#160;Wong,&#160;‘‘Manga&#160;filling&#160;style&#160;conversion&#160;with<br/>
+generative&#160;adversarial&#160;networks,’’&#160;in&#160;<i>Proc.&#160;Int.&#160;Conf.&#160;Mach.&#160;Learn.</i>,&#160;2019,<br/>
+screentone&#160;variational&#160;autoencoder,’’&#160;<i>ACM&#160;Trans.&#160;Graph.</i>,&#160;vol.&#160;39,&#160;no.&#160;6,<br/>
+pp.&#160;7354–7363.<br/>
+pp.&#160;1–15,&#160;Dec.&#160;2020.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[37]&#160;</a>S.-Y.&#160;Chen,&#160;J.-Q.&#160;Zhang,&#160;L.&#160;Gao,&#160;Y.&#160;He,&#160;S.&#160;Xia,&#160;M.&#160;Shi,&#160;and&#160;F.-L.&#160;Zhang,<br/>
+‘‘Active&#160;colorization&#160;for&#160;cartoon&#160;line&#160;drawings,’’&#160;<i>IEEE&#160;Trans.&#160;Vis.&#160;Comput.<br/>Graphics</i>,&#160;vol.&#160;28,&#160;no.&#160;2,&#160;pp.&#160;1198–1208,&#160;Feb.&#160;2022.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[38]&#160;</a>M.&#160;Golyadkin&#160;and&#160;I.&#160;Makarov,&#160;‘‘Semi-automatic&#160;Manga&#160;colorization&#160;using<br/>
+MAKSIM&#160;GOLYADKIN&#160;received&#160;the&#160;master’s<br/>
+conditional&#160;adversarial&#160;networks,’’&#160;in&#160;<i>Analysis&#160;of&#160;Images,&#160;Social&#160;Networks</i><br/>
+degree&#160;in&#160;applied&#160;mathematics&#160;and&#160;informatics<br/>
+<i>and&#160;Texts</i>.&#160;Berlin,&#160;Germany:&#160;Springer,&#160;2021,&#160;pp.&#160;230–242.<br/>
+and&#160;the&#160;Ph.D.&#160;degree&#160;in&#160;computer&#160;science&#160;from<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[39]&#160;</a>X.&#160;Luo,&#160;X.&#160;Zhang,&#160;P.&#160;Yoo,&#160;R.&#160;Martin-Brualla,&#160;J.&#160;Lawrence,&#160;and&#160;S.&#160;M.&#160;Seitz,<br/>
+HSE&#160;University.&#160;He&#160;is&#160;currently&#160;a&#160;Researcher&#160;in<br/>
+‘‘Time-travel&#160;rephotography,’’&#160;<i>ACM&#160;Trans.&#160;Graph.</i>,&#160;vol.&#160;40,&#160;no.&#160;6,<br/>
+the&#160;field&#160;of&#160;graph&#160;neural&#160;networks&#160;applications&#160;to<br/>
+pp.&#160;1–12,&#160;Dec.&#160;2021.<br/>
+the&#160;industrial&#160;AI&#160;with&#160;the&#160;Artificial&#160;Intelligence<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[40]&#160;</a>Y.&#160;Wu,&#160;X.&#160;Wang,&#160;Y.&#160;Li,&#160;H.&#160;Zhang,&#160;X.&#160;Zhao,&#160;and&#160;Y.&#160;Shan,&#160;‘‘Towards<br/>
+Research&#160;Institute&#160;(AIRI),&#160;Moscow,&#160;Russia.&#160;His<br/>
+vivid&#160;and&#160;diverse&#160;image&#160;colorization&#160;with&#160;generative&#160;color&#160;prior,’’&#160;in&#160;<i>Proc.</i><br/>
+contributions&#160;include&#160;initial&#160;idea,&#160;model&#160;and&#160;exper-<br/>
+<i>IEEE/CVF&#160;Int.&#160;Conf.&#160;Comput.&#160;Vis.&#160;(ICCV)</i>,&#160;Oct.&#160;2021,&#160;pp.&#160;14357–14366.<br/>
+iment&#160;design,&#160;and&#160;paper&#160;preparation.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[41]&#160;</a>Y.-J.&#160;Wei,&#160;T.-T.&#160;Wei,&#160;T.-Y.&#160;Kuo,&#160;and&#160;P.-C.&#160;Su,&#160;‘‘Two-stage&#160;pyramidal<br/>
+convolutional&#160;neural&#160;networks&#160;for&#160;image&#160;colorization,’’&#160;<i>APSIPA&#160;Trans.<br/>Signal&#160;Inf.&#160;Process.</i>,&#160;vol.&#160;10,&#160;no.&#160;1,&#160;p.&#160;e15,&#160;2021.<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#3">[42]&#160;</a>K.&#160;C.&#160;K.&#160;Chan,&#160;X.&#160;Wang,&#160;X.&#160;Xu,&#160;J.&#160;Gu,&#160;and&#160;C.&#160;C.&#160;Loy,&#160;‘‘GLEAN:<br/>
+Generative&#160;latent&#160;bank&#160;for&#160;large-factor&#160;image&#160;super-resolution,’’&#160;in&#160;<i>Proc.</i><br/>
+ILYA&#160;MAKAROV&#160;received&#160;the&#160;Specialist&#160;degree&#160;in<br/>
+<i>IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jun.&#160;2021,<br/>
+mathematics&#160;from&#160;Lomonosov&#160;Moscow&#160;State&#160;Uni-<br/>
+pp.&#160;14240–14249.<br/>
+versity,&#160;Moscow,&#160;Russia,&#160;and&#160;the&#160;Ph.D.&#160;degree<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">[43]&#160;</a>E.&#160;Richardson,&#160;Y.&#160;Alaluf,&#160;O.&#160;Patashnik,&#160;Y.&#160;Nitzan,&#160;Y.&#160;Azar,&#160;S.&#160;Shapiro,&#160;and<br/>
+in&#160;computer&#160;science&#160;from&#160;the&#160;University&#160;of<br/>
+D.&#160;Cohen-Or,&#160;‘‘Encoding&#160;in&#160;style:&#160;A&#160;styleGAN&#160;encoder&#160;for&#160;image-to-image<br/>
+Ljubljana,&#160;Ljubljana,&#160;Slovenia.<br/>
+translation,’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.</i><br/>
+Since&#160;2011,&#160;he&#160;has&#160;been&#160;a&#160;Lecturer&#160;with&#160;the<br/>
+<i>(CVPR)</i>,&#160;Jun.&#160;2021,&#160;pp.&#160;2287–2296.<br/>
+School&#160;of&#160;Data&#160;Analysis&#160;and&#160;Artificial&#160;Intelli-<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">[44]&#160;</a>R.&#160;Abdal,&#160;Y.&#160;Qin,&#160;and&#160;P.&#160;Wonka,&#160;‘‘Image2StyleGAN:&#160;How&#160;to&#160;embed<br/>
+gence,&#160;HSE&#160;University,&#160;where&#160;he&#160;was&#160;the&#160;School<br/>
+images&#160;into&#160;the&#160;StyleGAN&#160;latent&#160;space?’’&#160;in&#160;<i>Proc.&#160;IEEE/CVF&#160;Int.&#160;Conf.</i><br/>
+Deputy&#160;Head,&#160;from&#160;2012&#160;to&#160;2016,&#160;and&#160;is&#160;currently<br/>
+<i>Comput.&#160;Vis.&#160;(ICCV)</i>,&#160;Oct.&#160;2019,&#160;pp.&#160;4431–4440.<br/>
+an&#160;Associate&#160;Professor&#160;and&#160;a&#160;Senior&#160;Research<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">[45]&#160;</a>R.&#160;Zhang,&#160;P.&#160;Isola,&#160;A.&#160;A.&#160;Efros,&#160;E.&#160;Shechtman,&#160;and&#160;O.&#160;Wang,&#160;‘‘The<br/>
+unreasonable&#160;effectiveness&#160;of&#160;deep&#160;features&#160;as&#160;a&#160;perceptual&#160;metric,’’<br/>
+Fellow.&#160;He&#160;was&#160;the&#160;Program&#160;Director&#160;of&#160;the&#160;BigData&#160;Academy&#160;MADE<br/>
+in&#160;<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.</i>,&#160;Jun.&#160;2018,<br/>
+from&#160;VK,&#160;and&#160;a&#160;Researcher&#160;with&#160;the&#160;Samsung-PDMI&#160;Joint&#160;AI&#160;Center,<br/>
+pp.&#160;586–595.<br/>
+St.&#160;Petersburg&#160;Department,&#160;V.&#160;A.&#160;Steklov&#160;Mathematical&#160;Institute,&#160;Russian<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">[46]&#160;</a>S.&#160;Xie,&#160;R.&#160;Girshick,&#160;P.&#160;Dollár,&#160;Z.&#160;Tu,&#160;and&#160;K.&#160;He,&#160;‘‘Aggregated&#160;residual<br/>
+Academy&#160;of&#160;Sciences,&#160;Saint&#160;Petersburg,&#160;Russia.&#160;He&#160;is&#160;also&#160;a&#160;Senior&#160;Research<br/>
+transformations&#160;for&#160;deep&#160;neural&#160;networks,’’&#160;in&#160;<i>Proc.&#160;IEEE&#160;Conf.&#160;Comput.</i><br/>
+Fellow&#160;with&#160;the&#160;Artificial&#160;Intelligence&#160;Research&#160;Institute&#160;(AIRI),&#160;Moscow,<br/>
+<i>Vis.&#160;Pattern&#160;Recognit.&#160;(CVPR)</i>,&#160;Jul.&#160;2017,&#160;pp.&#160;5987–5995.<br/>
+where&#160;he&#160;leads&#160;the&#160;research&#160;in&#160;industrial&#160;AI.&#160;He&#160;became&#160;the&#160;Head&#160;of&#160;the<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#4">[47]&#160;</a>J.&#160;Hu,&#160;L.&#160;Shen,&#160;and&#160;G.&#160;Sun,&#160;‘‘Squeeze-and-excitation&#160;networks,’’&#160;in<br/>
+AI&#160;Center&#160;and&#160;the&#160;Data&#160;Science&#160;Tech&#160;Master&#160;Program&#160;in&#160;NLP,&#160;National<br/>
+<i>Proc.&#160;IEEE/CVF&#160;Conf.&#160;Comput.&#160;Vis.&#160;Pattern&#160;Recognit.</i>,&#160;Jun.&#160;2018,<br/>
+University&#160;of&#160;Science&#160;and&#160;Technology&#160;MISIS.&#160;His&#160;contributions&#160;include<br/>
+pp.&#160;7132–7141.<br/>
+paper&#160;revision,&#160;help&#160;with&#160;experiment&#160;and&#160;model&#160;design,&#160;and&#160;research<br/>
+<a href="Robust_Manga_Page_Colorization_via_Coloring_Latent_Spaces.html#5">[48]&#160;</a>T.&#160;Miyato,&#160;T.&#160;Kataoka,&#160;M.&#160;Koyama,&#160;and&#160;Y.&#160;Yoshida,&#160;‘‘Spectral&#160;normaliza-<br/>
+supervision.<br/>
+tion&#160;for&#160;generative&#160;adversarial&#160;networks,’’&#160;2018,&#160;<i>arXiv:1802.05957</i>.<br/>
+VOLUME&#160;11,&#160;2023<br/>
+111597<br/>
+<hr/>
+</body>
+</html>
